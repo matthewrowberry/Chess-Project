@@ -48,30 +48,30 @@ public class ChessBoard {
 
         //pawns
         for(int i = 0; i<7; i++){
-            this.board[i][1] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(PAWN));
-            this.board[i][1] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(PAWN));
+            this.board[i][1] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(PAWN));
+            this.board[i][1] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(PAWN));
         }
         //rooks
-        this.board[0][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(ROOK));
-        this.board[0][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(ROOK));
-        this.board[7][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(ROOK));
-        this.board[7][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(ROOK));
+        this.board[0][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(ROOK));
+        this.board[0][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(ROOK));
+        this.board[7][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(ROOK));
+        this.board[7][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(ROOK));
         //knights
-        this.board[1][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(KNIGHT));
-        this.board[1][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(KNIGHT));
-        this.board[6][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(KNIGHT));
-        this.board[6][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(KNIGHT));
+        this.board[1][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(KNIGHT));
+        this.board[1][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(KNIGHT));
+        this.board[6][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(KNIGHT));
+        this.board[6][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(KNIGHT));
         //Bishops
-        this.board[2][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(BISHOP));
-        this.board[2][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(BISHOP));
-        this.board[5][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(BISHOP));
-        this.board[5][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(BISHOP));
+        this.board[2][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(BISHOP));
+        this.board[2][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(BISHOP));
+        this.board[5][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(BISHOP));
+        this.board[5][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(BISHOP));
         //Queen
-        this.board[3][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(QUEEN));
-        this.board[4][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(QUEEN));
+        this.board[3][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(QUEEN));
+        this.board[4][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(QUEEN));
         //King
-        this.board[4][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(KING));
-        this.board[3][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(KING));
+        this.board[4][0] = new ChessPiece(ChessGame.TeamColor.valueOf(WHITE), ChessPiece.PieceType.valueOf(KING));
+        this.board[3][7] = new ChessPiece(ChessGame.TeamColor.valueOf(BLACK), ChessPiece.PieceType.valueOf(KING));
 
 
     }
