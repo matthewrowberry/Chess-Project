@@ -7,9 +7,9 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
+    private ChessPiece[][] board;
     public ChessBoard() {
-        
+        this.board = new ChessPiece[8][8];
     }
 
     /**
@@ -19,7 +19,9 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+
+        this.board[position.getRow()][position.getColumn()] = piece;
+
     }
 
     /**
@@ -30,7 +32,9 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+
+        return this.board[position.getRow()][position.getColumn()];
+
     }
 
     /**
@@ -38,6 +42,37 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+
+
+        this.board = new ChessPiece[8][8];
+
+        //pawns
+        for(int i = 0; i<7; i++){
+            this.board[i][1] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(PAWN));
+            this.board[i][1] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(PAWN));
+        }
+        //rooks
+        this.board[0][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(ROOK));
+        this.board[0][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(ROOK));
+        this.board[7][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(ROOK));
+        this.board[7][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(ROOK));
+        //knights
+        this.board[1][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(KNIGHT));
+        this.board[1][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(KNIGHT));
+        this.board[6][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(KNIGHT));
+        this.board[6][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(KNIGHT));
+        //Bishops
+        this.board[2][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(BISHOP));
+        this.board[2][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(BISHOP));
+        this.board[5][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(BISHOP));
+        this.board[5][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(BISHOP));
+        //Queen
+        this.board[3][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(QUEEN));
+        this.board[4][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(QUEEN));
+        //King
+        this.board[4][0] = new ChessPiece(TeamColor.valueOf(WHITE), PieceType.valueOf(KING));
+        this.board[3][7] = new ChessPiece(TeamColor.valueOf(BLACK), PieceType.valueOf(KING));
+
+
     }
 }
