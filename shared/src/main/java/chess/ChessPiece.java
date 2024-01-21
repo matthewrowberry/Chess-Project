@@ -1,5 +1,6 @@
 package chess;
 
+
 import java.util.Collection;
 
 /**
@@ -12,9 +13,11 @@ public class ChessPiece {
 
     private PieceType type;
     private ChessGame.TeamColor color;
+    private PossibleMoves moves;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.type = type;
         this.color = pieceColor;
+        this.moves = new PossibleMoves(type);
 
     }
 
@@ -53,6 +56,8 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return moves.getMoves(board,myPosition);
+
+
     }
 }
