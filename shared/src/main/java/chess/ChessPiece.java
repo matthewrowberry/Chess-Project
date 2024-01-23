@@ -13,9 +13,11 @@ public class ChessPiece {
 
     ChessGame.TeamColor color;
     ChessPiece.PieceType type;
+    PossibleMoves moves;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.color = pieceColor;
         this.type = type;
+        moves = new PossibleMoves(this.type);
     }
 
     @Override
@@ -67,6 +69,6 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return moves.getMoves(board,myPosition);
     }
 }

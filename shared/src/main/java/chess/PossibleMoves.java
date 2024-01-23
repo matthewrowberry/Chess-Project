@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class PossibleMoves {
     ChessPiece.PieceType type;
+    ChessGame.TeamColor color;
     ChessBoard board;
     ChessPosition myPosition;
     public PossibleMoves(ChessPiece.PieceType type){
@@ -13,7 +14,7 @@ public class PossibleMoves {
     public ArrayList<ChessMove> getMoves(ChessBoard board, ChessPosition myPosition){
         this.board = board;
         this.myPosition = myPosition;
-
+        this.color = board.getPiece(myPosition).getTeamColor();
         return switch(type){
             case ROOK -> rook();
             case KING -> king();
@@ -101,17 +102,49 @@ public class PossibleMoves {
         return moves;
     }
 
-    public ArrayList<ChessMove> checkDirection(int x, int y){
+    public ArrayList<ChessMove> checkDirection1(int x, int y){
         //new arraylist
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         ChessPosition position = new ChessPosition(myPosition.getRow()+y, myPosition.getColumn()+x);
-
-        while(board.getPiece(position)==null){
+        if(position.getColumn()+x<=8 && position.getColumn()+x>0 && position.getRow()+y>0 && position.getRow()<=8 && board.getPiece(position)!=null){
+            moves.add(new ChessMove(myPosition,position,null));
+        }
+        while(position.getColumn()+x<=8 && position.getColumn()+x>0 && position.getRow()+y>0 && position.getRow()<=8 && board.getPiece(position)==null){
             moves.add(new ChessMove(myPosition,position,null));
             position = new ChessPosition(position.getRow()+y, position.getColumn()+x);
+            if(position.getColumn()+x<=8 && position.getColumn()+x>0 && position.getRow()+y>0 && position.getRow()<=8 && board.getPiece(position)!=null){
+                moves.add(new ChessMove(myPosition,position,null));
+            }
+        }
+
+        return moves;
+    }
+
+    public ArrayList<ChessMove> checkDirection(int row, int col) {
+
+        ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+        int newRow = myPosition.getRow()+row;
+        int newCol=myPosition.getColumn()+col;
+        while(inBounds(newRow, newCol) && board.getPiece(new ChessPosition(newRow,newCol)) == null){
+            moves.add(getChessMove(newRow,newCol));
+            newRow += row;
+            newCol += col;
+        }
+
+        if(inBounds(newRow, newCol) && board.getPiece(new ChessPosition(newRow,newCol)) != null && board.getPiece(new ChessPosition(newRow,newCol)).getTeamColor() != this.color){
+            moves.add(getChessMove(newRow,newCol));
 
         }
 
         return moves;
+
+    }
+
+    private boolean inBounds(int row,int col){
+        return row>=1 && row<=8 && col >=1 && col <= 8;
+    }
+
+    private ChessMove getChessMove(int row,int col){
+        return new ChessMove(myPosition,new ChessPosition(row,col));
     }
 }
