@@ -70,9 +70,13 @@ public class PossibleMoves {
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         int[][] possible = {{1,2},{2,1},{-1,2},{-2,1},{1,-2},{2,-1},{-2,-1},{-1,-2}};
         for(int[] i : possible){
-            if(board.getPiece(new ChessPosition(myPosition.getRow()+i[0], myPosition.getColumn()+i[1]))==null){
+            if(inBounds(myPosition.getRow()+i[0],myPosition.getColumn()+i[1]) && board.getPiece(new ChessPosition(myPosition.getRow()+i[0], myPosition.getColumn()+i[1]))==null){
                 moves.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+i[0], myPosition.getColumn()+i[1]),null));
             }
+            else if(inBounds(myPosition.getRow()+i[0],myPosition.getColumn()+i[1]) && board.getPiece(new ChessPosition(myPosition.getRow()+i[0], myPosition.getColumn()+i[1])).getTeamColor()!=color){
+                moves.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+i[0], myPosition.getColumn()+i[1]),null));
+            }
+
         }
         return moves;
     }
