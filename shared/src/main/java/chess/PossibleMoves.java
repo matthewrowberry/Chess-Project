@@ -56,11 +56,24 @@ public class PossibleMoves {
 
     private ArrayList<ChessMove> king(){
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
-        for(int x = -1; x<1; x++){
-            for(int y = -1; y<1; y++){
-                if(x!=0 || y!=0 && board.getPiece(new ChessPosition(myPosition.getRow()+y, myPosition.getColumn()+x))==null){
-                    moves.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+y, myPosition.getColumn()+x),null));
+        for(int x = -1; x<=1; x++){
+            for(int y = -1; y<=1; y++){
+
+                if(!(x==0 && y==0)){
+                    if(inBounds(myPosition.getRow()+y, myPosition.getColumn()+x)){
+                        if(board.getPiece(new ChessPosition(myPosition.getRow()+y, myPosition.getColumn()+x)) == null){
+
+                            moves.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+y, myPosition.getColumn()+x)));
+
+                        }else if(board.getPiece(new ChessPosition(myPosition.getRow()+y, myPosition.getColumn()+x)).getTeamColor() != color){
+
+                            moves.add(new ChessMove(myPosition,new ChessPosition(myPosition.getRow()+y, myPosition.getColumn()+x)));
+
+                        }
+
+                    }
                 }
+
             }
         }
         return moves;
@@ -82,7 +95,8 @@ public class PossibleMoves {
     }
 
     private ChessPiece getNext(int row, int col){
-        return board.getPiece(new ChessPosition(myPosition.getRow()+row, myPosition.getColumn()+col));
+        return board.getPiece(new ChessPosition(myPosition.getRow() + row, myPosition.getColumn() + col));
+
     }
 
     private ArrayList<ChessMove> pawn() {
