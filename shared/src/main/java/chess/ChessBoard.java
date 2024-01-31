@@ -29,6 +29,11 @@ public class ChessBoard {
         board[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = null;
     }
 
+    public void undoMove(ChessMove move){
+        board[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = board[move.getEndPosition().getRow()][move.getEndPosition().getColumn()];
+        board[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = null;
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *
