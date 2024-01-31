@@ -1,8 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,12 +9,8 @@ import java.util.Iterator;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private boolean WhiteTurn;
-    ChessBoard board;
+
     public ChessGame() {
-        WhiteTurn = true;
-        board = new ChessBoard();
-        board.resetBoard();
 
     }
 
@@ -24,10 +18,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        if(WhiteTurn){
-            return TeamColor.WHITE;
-        }
-        return TeamColor.BLACK;
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -36,12 +27,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        if(team == TeamColor.WHITE){
-            WhiteTurn = true;
-        }
-        else{
-            WhiteTurn = false;
-        }
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -60,72 +46,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if(board.getPiece(startPosition) == null){
-            return null;
-        }
-        ChessPiece piece = board.getPiece(startPosition);
-        Collection<ChessMove> moves = piece.pieceMoves(board,startPosition);
-        Iterator iterator = moves.iterator();
-        ArrayList<ChessMove> newMoves = new ArrayList<ChessMove>();
-
-        while(iterator.hasNext()) {
-            ChessMove move = (ChessMove) iterator.next();
-            if(CheckValid(move)){
-                newMoves.add(move);
-            }
-        }
-
-        return newMoves;
-
+        throw new RuntimeException("Not implemented");
     }
-
-    private boolean CheckValid(ChessMove move){
-        ChessPosition kingPos = null;
-        ChessBoard newBoard = new ChessBoard();
-        for(int row = 1; row<=8; row++){
-            for(int col = 1; col<=8; col++){
-                //if we're not on the start of the moved piece, copy in the piece there to our new board
-                if(!(row == move.getStartPosition().getRow() && col == move.getStartPosition().getColumn())){
-                    //SIMPLIFY WITH CODE DUPLICATION FIX
-                    newBoard.addPiece(getPosition(row,col), board.getPiece(getPosition(row,col)));
-                }else{
-                    ChessPosition newPosition = getPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn());
-                    newBoard.addPiece(newPosition,board.getPiece(getPosition(row,col)));
-                }
-                if(board.getPiece(getPosition(row,col)) != null && board.getPiece(getPosition(row,col)).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(getPosition(row,col)).getTeamColor() == board.getPiece(move.getStartPosition()).getTeamColor()){
-                    kingPos = getPosition(row,col);
-                }
-            }
-        }
-
-
-
-        Collection<ChessMove> movesToCheck;
-        for(int row = 1; row<=8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                if(newBoard.getPiece(getPosition(row,col)).getTeamColor() != board.getPiece(move.getStartPosition()).getTeamColor()) {
-                    movesToCheck = newBoard.getPiece(getPosition(row, col)).pieceMoves(newBoard, getPosition(row, col));
-                    for (ChessMove enemyMove : movesToCheck) {
-                        if (!CheckKing(enemyMove, kingPos)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-
-    //returns false if king is in danger
-    private boolean CheckKing(ChessMove move, ChessPosition kingPosition){
-        return move.getEndPosition() != kingPosition;
-    }
-
-    private ChessPosition getPosition(int row, int col){
-        return new ChessPosition(row,col);
-    }
-
 
     /**
      * Makes a move in a chess game
@@ -174,12 +96,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        this.board = new ChessBoard();
-        for(int row = 1; row<9; row++){
-            for(int col = 1; col<9; col++){
-                this.board.addPiece(getPosition(row,col),board.getPiece(getPosition(row,col)));
-            }
-        }
+        throw new RuntimeException("Not implemented");
     }
 
     /**
