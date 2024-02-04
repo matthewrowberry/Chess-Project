@@ -33,6 +33,29 @@ public class ChessPiece {
         PAWN
     }
 
+    @Override
+    public String toString() {
+        if(color== ChessGame.TeamColor.WHITE) {
+            return switch (type) {
+                case KING -> "K";
+                case BISHOP -> "B";
+                case QUEEN -> "Q";
+                case KNIGHT -> "N";
+                case PAWN -> "P";
+                case ROOK -> "R";
+            };
+        }else{
+            return switch (type) {
+                case KING -> "k";
+                case BISHOP -> "b";
+                case QUEEN -> "q";
+                case KNIGHT -> "n";
+                case PAWN -> "p";
+                case ROOK -> "r";
+            };
+        }
+    }
+
     /**
      * @return Which team this chess piece belongs to
      */

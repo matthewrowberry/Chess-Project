@@ -25,13 +25,20 @@ public class ChessBoard {
     }
 
     public void makeMove(ChessMove move){
-        board[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = board[move.getStartPosition().getRow()][move.getStartPosition().getColumn()];
-        board[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = null;
+        board[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1] = board[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1];
+        board[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1] = null;
     }
 
     public void undoMove(ChessMove move){
-        board[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = board[move.getEndPosition().getRow()][move.getEndPosition().getColumn()];
-        board[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = null;
+        board[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1] = board[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1];
+        board[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1] = null;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "board=" + Arrays.deepToString(board) +
+                '}';
     }
 
     /**

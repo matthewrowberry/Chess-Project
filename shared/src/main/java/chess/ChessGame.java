@@ -66,7 +66,7 @@ public class ChessGame {
         for(ChessMove move : getPiece(startPosition).pieceMoves(board,startPosition)){
             board.makeMove(move);
 
-            if(!isInCheck(getPiece(startPosition).getTeamColor())){
+            if(getPiece(move.getEndPosition())!=null&&!isInCheck(getPiece(move.getEndPosition()).getTeamColor())){
                 moves.add(move);
             }
 
@@ -113,7 +113,7 @@ public class ChessGame {
         //get teamcolor's king position
         for(int row = 1; row<9; row++) {
             for (int col = 1; col < 9; col++) {
-                if(newBoard.getPiece(getPos(row,col)).getPieceType() == ChessPiece.PieceType.KING && newBoard.getPiece(getPos(row,col)).getTeamColor() == teamColor){
+                if(newBoard.getPiece(getPos(row,col))!= null && newBoard.getPiece(getPos(row,col)).getPieceType() == ChessPiece.PieceType.KING && newBoard.getPiece(getPos(row,col)).getTeamColor() == teamColor){
                     king = getPos(row,col);
                 }
             }
@@ -124,7 +124,7 @@ public class ChessGame {
                 //save position
                 ChessPosition tempPos = getPos(row,col);
                 //if the piece is the other color, check if that pieces moves include a move that kills our king
-                if(newBoard.getPiece(tempPos).getTeamColor() != teamColor && CheckForCheck(newBoard.getPiece(tempPos).pieceMoves(newBoard,tempPos),king)){
+                if(newBoard.getPiece(tempPos)!= null && newBoard.getPiece(tempPos).getTeamColor() != teamColor && CheckForCheck(newBoard.getPiece(tempPos).pieceMoves(newBoard,tempPos),king)){
                     return true;
                 }
             }
@@ -164,7 +164,7 @@ public class ChessGame {
         for(int row = 1; row<9; row++){
             for(int col = 1; col<9; col++){
                 //if it's teamColor's team
-                if(getPiece(board,row,col).getTeamColor()==teamColor){
+                if(getPiece(board,row,col) != null && getPiece(board,row,col).getTeamColor()==teamColor){
                     //get each piece's valid moves
                     for(ChessMove move : validMoves(getPos(row,col))){
                         //make each move
@@ -205,7 +205,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        board = new ChessBoard();
+        this.board = new ChessBoard();
         for(int row = 1; row<9; row++){
             for(int col = 1; col<9; col++){
                 this.board.addPiece(getPos(row,col),board.getPiece(getPos(row,col)));
