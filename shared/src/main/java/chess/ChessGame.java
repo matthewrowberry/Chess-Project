@@ -12,6 +12,11 @@ import java.util.Collection;
 public class ChessGame {
     private boolean blackTurn;
     private ChessBoard board;
+    private boolean wcastleRight = true;
+    private boolean wcastleLeft = true;
+    private boolean bcastleRight = true;
+    private boolean bcastleLeft = true;
+
     public ChessGame() {
 
     }
@@ -33,9 +38,10 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         if(team == TeamColor.WHITE){
+            blackTurn = false;
+        }else {
             blackTurn = true;
         }
-        blackTurn = false;
     }
 
     /**
@@ -60,15 +66,40 @@ public class ChessGame {
         if(getPiece(board,startPosition.getRow(),startPosition.getColumn())==null){
             return null;
         }
-
+        TeamColor color = getPiece(startPosition).getTeamColor();
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
 
         ChessBoard backup = setNewBoard(board);
         for(ChessMove move : getPiece(startPosition).pieceMoves(board,startPosition)){
-            board.makeMove(move);
+
+            makePracticeMove(move);
 
             if(getPiece(move.getEndPosition())!=null&&!isInCheck(getPiece(move.getEndPosition()).getTeamColor())){
-                moves.add(move);
+                if(getPiece(move.getEndPosition()).getPieceType()== ChessPiece.PieceType.KING && Math.abs(move.getEndPosition().getColumn()-move.getStartPosition().getColumn())>1) {
+                    if(move.getEndPosition().getColumn()-move.getStartPosition().getColumn()>1){
+                        if(!rookInCheck(getPos(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-1),board)){
+                            if(move.getStartPosition().getRow()==1 && wcastleRight) {
+                                moves.add(move);
+                            }else if(move.getStartPosition().getRow()==8 && bcastleRight){
+                                moves.add(move);
+                            }
+                        }
+                    }
+                    else{
+                        if(!rookInCheck(getPos(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1),board)){
+                            if(move.getStartPosition().getRow()==1 && wcastleLeft) {
+                                moves.add(move);
+                            }else if(move.getStartPosition().getRow()==8 && bcastleLeft){
+                                moves.add(move);
+                            }
+                        }
+                    }
+                }
+                else{
+                    moves.add(move);
+                }
+
+
             }
 
             setBoard(backup);
@@ -90,7 +121,48 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if(validMoves(move.getStartPosition()).contains(move) && getPiece(move.getStartPosition()).getTeamColor()==getTeamTurn()) {
-            board.makeMove(move);
+            if(board.getPiece(move.getStartPosition()).getPieceType()== ChessPiece.PieceType.KING && Math.abs(move.getEndPosition().getColumn()-move.getStartPosition().getColumn())>1){
+                if(move.getEndPosition().getColumn()-move.getStartPosition().getColumn()<0&&((move.getStartPosition().getRow()==8 &&bcastleLeft)||(move.getStartPosition().getRow()==1 &&wcastleLeft))){
+                    board.makeMove(move);
+                    ChessPosition start = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()-4);
+                    ChessPosition end = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()-1);
+
+                    board.makeMove(new ChessMove(start,end));
+                }
+                else if (((move.getStartPosition().getRow()==8 &&bcastleRight)||(move.getStartPosition().getRow()==1 &&wcastleRight))){
+                    board.makeMove(move);
+                    ChessPosition start = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()+3);
+                    ChessPosition end = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()+1);
+
+                    board.makeMove(new ChessMove(start,end));
+                }
+            }else {
+                if(move.getStartPosition().getRow()==8) {
+                    if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+                        bcastleLeft = false;
+                        bcastleRight = false;
+                    } else if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.ROOK && move.getStartPosition().getColumn() == 1) {
+                        bcastleLeft = false;
+
+                    } else if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.ROOK && move.getStartPosition().getColumn() == 8) {
+                        bcastleRight = false;
+
+                    }
+                }
+                else if(move.getStartPosition().getRow()==1) {
+                    if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+                        wcastleLeft = false;
+                        wcastleRight = false;
+                    } else if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.ROOK && move.getStartPosition().getColumn() == 1) {
+                        wcastleLeft = false;
+
+                    } else if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.ROOK && move.getStartPosition().getColumn() == 8) {
+                        wcastleRight = false;
+
+                    }
+                }
+                board.makeMove(move);
+            }
             blackTurn = !blackTurn;
         }
         else {
@@ -98,6 +170,26 @@ public class ChessGame {
         }
     }
 
+    private void makePracticeMove(ChessMove move){
+        if(board.getPiece(move.getStartPosition()).getPieceType()== ChessPiece.PieceType.KING && Math.abs(move.getEndPosition().getColumn()-move.getStartPosition().getColumn())>1){
+            if(move.getEndPosition().getColumn()-move.getStartPosition().getColumn()<0){
+                board.makeMove(move);
+                ChessPosition start = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()-4);
+                ChessPosition end = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()-1);
+
+                board.makeMove(new ChessMove(start,end));
+            }
+            else{
+                board.makeMove(move);
+                ChessPosition start = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()+3);
+                ChessPosition end = new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()+1);
+
+                board.makeMove(new ChessMove(start,end));
+            }
+        }else {
+            board.makeMove(move);
+        }
+    }
 
     /**
      * Determines if the given team is in check
@@ -120,6 +212,24 @@ public class ChessGame {
                 }
             }
         }
+        //for each position
+        for(int row = 1; row<9; row++){
+            for(int col = 1; col<9; col++){
+                //save position
+                ChessPosition tempPos = getPos(row,col);
+                //if the piece is the other color, check if that pieces moves include a move that kills our king
+                if(newBoard.getPiece(tempPos)!= null && newBoard.getPiece(tempPos).getTeamColor() != teamColor && CheckForCheck(newBoard.getPiece(tempPos).pieceMoves(newBoard,tempPos),king)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean rookInCheck(ChessPosition rookPos,ChessBoard newBoard) {
+        ChessPosition king = rookPos;
+        TeamColor teamColor = getPiece(rookPos).getTeamColor();
+
         //for each position
         for(int row = 1; row<9; row++){
             for(int col = 1; col<9; col++){

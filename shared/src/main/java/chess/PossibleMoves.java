@@ -99,7 +99,7 @@ public class PossibleMoves {
                 moves.add(getChessMoveOffset(i[0],i[1]));
             }
         }
-
+        //check castle add
         if(myRow==1 || myRow==8 && myCol == 5){
             if(getPieceOffset(0,-4)!=null && getPieceOffset(0,-4).getPieceType()==ChessPiece.PieceType.ROOK&&getPieceOffset(0,-1)==null&&getPieceOffset(0,-2)==null){
                 moves.add(getChessMoveOffset(0,-2));
