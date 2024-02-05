@@ -25,8 +25,13 @@ public class ChessBoard {
     }
 
     public void makeMove(ChessMove move){
-        board[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1] = board[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1];
-        board[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1] = null;
+        if(move.getPromotionPiece()==null) {
+            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1];
+            board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
+        }else{
+            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(),move.getPromotionPiece());
+            board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
+        }
     }
 
     public void undoMove(ChessMove move){
@@ -49,7 +54,10 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()-1][position.getColumn()-1];
+        if(position.getColumn()>=1 && position.getColumn()<=8 && position.getRow()>=1 && position.getRow()<=8) {
+            return board[position.getRow() - 1][position.getColumn() - 1];
+        }
+        return null;
     }
 
     @Override
@@ -94,7 +102,7 @@ public class ChessBoard {
         addPiece(new ChessPosition(8,6),new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
         addPiece(new ChessPosition(1,6),new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
 
-        //rooks
+        //queen king
         addPiece(new ChessPosition(8,4),new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
         addPiece(new ChessPosition(1,4),new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
         addPiece(new ChessPosition(8,5),new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));

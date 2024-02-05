@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,7 +10,7 @@ import java.util.Iterator;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private boolean whiteTurn;
+    private boolean blackTurn;
     private ChessBoard board;
     public ChessGame() {
 
@@ -21,10 +20,10 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        if(whiteTurn){
-            return TeamColor.WHITE;
+        if(blackTurn){
+            return TeamColor.BLACK;
         }
-        return TeamColor.BLACK;
+        return TeamColor.WHITE;
     }
 
     /**
@@ -34,9 +33,9 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         if(team == TeamColor.WHITE){
-            whiteTurn = true;
+            blackTurn = true;
         }
-        whiteTurn = false;
+        blackTurn = false;
     }
 
     /**
@@ -62,7 +61,7 @@ public class ChessGame {
             return null;
         }
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
-
+        ChessBoard backup = setNewBoard(board);
         for(ChessMove move : getPiece(startPosition).pieceMoves(board,startPosition)){
             board.makeMove(move);
 
@@ -70,7 +69,7 @@ public class ChessGame {
                 moves.add(move);
             }
 
-            board.undoMove(move);
+            setBoard(backup);
 
         }
 
@@ -88,8 +87,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if(validMoves(move.getStartPosition()).contains(move)) {
+        if(validMoves(move.getStartPosition()).contains(move) && getPiece(move.getStartPosition()).getTeamColor()==getTeamTurn()) {
             board.makeMove(move);
+            blackTurn = !blackTurn;
         }
         else {
             throw new InvalidMoveException();
@@ -166,17 +166,19 @@ public class ChessGame {
                 //if it's teamColor's team
                 if(getPiece(board,row,col) != null && getPiece(board,row,col).getTeamColor()==teamColor){
                     //get each piece's valid moves
+                    ChessBoard backup = setNewBoard(board);
                     for(ChessMove move : validMoves(getPos(row,col))){
+
                         //make each move
                         board.makeMove(move);
                         //check if still in check
                         if(!isInCheck(teamColor)){
                             //if not still in check undo move and return false
-                            board.undoMove(move);
+                            setBoard(backup);
                             return false;
                         }
 
-                        board.undoMove(move);
+                        setBoard(backup);
                     }
                 }
             }
@@ -196,7 +198,19 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        for(int row = 1; row<=8; row++){
+            for(int col = 1; col<=8; col++){
+                if(getPiece(getPos(row,col)) != null && getPiece(getPos(row,col)).getTeamColor()==teamColor) {
+                    moves.addAll(validMoves(getPos(row, col)));
+                }
+            }
+        }
+        if(moves.isEmpty()){
+            return true;
+        }
+        return false;
+
     }
 
     /**
@@ -211,6 +225,16 @@ public class ChessGame {
                 this.board.addPiece(getPos(row,col),board.getPiece(getPos(row,col)));
             }
         }
+    }
+
+    public ChessBoard setNewBoard(ChessBoard oldBoard) {
+        ChessBoard board = new ChessBoard();
+        for(int row = 1; row<9; row++){
+            for(int col = 1; col<9; col++){
+                board.addPiece(getPos(row,col),oldBoard.getPiece(getPos(row,col)));
+            }
+        }
+        return board;
     }
 
     /**

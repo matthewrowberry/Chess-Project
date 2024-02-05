@@ -98,6 +98,8 @@ public class PossibleMoves {
                 moves.add(getChessMoveOffset(i[0],i[1]));
             }
         }
+        //if()
+
         return moves;
     }
 
