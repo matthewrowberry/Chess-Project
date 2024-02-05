@@ -60,7 +60,9 @@ public class ChessGame {
         if(getPiece(board,startPosition.getRow(),startPosition.getColumn())==null){
             return null;
         }
+
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+
         ChessBoard backup = setNewBoard(board);
         for(ChessMove move : getPiece(startPosition).pieceMoves(board,startPosition)){
             board.makeMove(move);
