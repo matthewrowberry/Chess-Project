@@ -90,7 +90,6 @@ public class PossibleMoves {
     private ArrayList<ChessMove> King(){
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         int[][] possibilities = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,1},{-1,0},{-1,-1}};
-
         for(int i[] : possibilities){
             if(inBoundsOffset(i[0],i[1]) && getPieceOffset(i[0],i[1]) == null){
                 moves.add(getChessMoveOffset(i[0],i[1]));
@@ -99,17 +98,7 @@ public class PossibleMoves {
                 moves.add(getChessMoveOffset(i[0],i[1]));
             }
         }
-        //check castle add
-        if(myRow==1 || myRow==8 && myCol == 5){
-            if(getPieceOffset(0,-4)!=null && getPieceOffset(0,-4).getPieceType()==ChessPiece.PieceType.ROOK&&getPieceOffset(0,-1)==null&&getPieceOffset(0,-2)==null){
-                moves.add(getChessMoveOffset(0,-2));
-            }
-            if(getPieceOffset(0,3)!=null && getPieceOffset(0,3).getPieceType()==ChessPiece.PieceType.ROOK&&getPieceOffset(0,1)==null&&getPieceOffset(0,2)==null){
-                moves.add(getChessMoveOffset(0,2));
-            }
-
-        }
-
+        //if()
 
         return moves;
     }
