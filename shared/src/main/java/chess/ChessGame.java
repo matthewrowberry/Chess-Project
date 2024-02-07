@@ -23,7 +23,9 @@ public class ChessGame {
         if(blackTurn){
             return TeamColor.BLACK;
         }
-        return TeamColor.WHITE;
+        else {
+            return TeamColor.WHITE;
+        }
     }
 
     /**
@@ -32,10 +34,12 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        if(team == TeamColor.WHITE){
+        if(team == TeamColor.BLACK){
             blackTurn = true;
         }
-        blackTurn = false;
+        else {
+            blackTurn = false;
+        }
     }
 
     /**
