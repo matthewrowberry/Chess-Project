@@ -10,8 +10,16 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+
+    /**
+     * Boolean set true if it is currently Black's turn.
+     */
     private boolean blackTurn;
     private ChessBoard board;
+
+    /**
+     * Constructor, no arguments required, does nothing.
+     */
     public ChessGame() {
 
     }
@@ -80,7 +88,11 @@ public class ChessGame {
         return moves;
     }
 
-
+    /**
+     * Assumes the position is valid, may return null. Also assumes it's the main board.
+     * @param position of the piece you want to get
+     * @return piece on the position.
+     */
     private ChessPiece getPiece(ChessPosition position){
         return getPiece(this.board,position.getRow(),position.getColumn());
     }
@@ -111,7 +123,12 @@ public class ChessGame {
         return isInCheck(teamColor,board);
     }
 
-    //is teamcolor in check
+    /**
+     * checks if [teamColor] is in check.
+     * @param teamColor
+     * @param newBoard any board, so that it can check moves without using them.
+     * @return true if the team is in check, false if not
+     */
     public boolean isInCheck(TeamColor teamColor,ChessBoard newBoard) {
         ChessPosition king = null;
         //get teamcolor's king position
@@ -136,6 +153,12 @@ public class ChessGame {
         return false;
     }
 
+    /**
+     * given a collection of moves, checks if any move lands on the king position
+     * @param moves - collection of moves
+     * @param king - position of king
+     * @return - true if position king is in danger.
+     */
     private boolean CheckForCheck(Collection<ChessMove> moves,ChessPosition king){
         //for each move put in
         for(ChessMove move : moves){
@@ -147,7 +170,12 @@ public class ChessGame {
         return false;
     }
 
-
+    /**
+     * helper function to return a position
+     * @param row
+     * @param col
+     * @return
+     */
     private ChessPosition getPos(int row, int col){
         return new ChessPosition(row,col);
     }
@@ -190,6 +218,13 @@ public class ChessGame {
         return true;
     }
 
+    /**
+     * gets a piece from a specified board. may return null.
+     * @param board
+     * @param row
+     * @param col
+     * @return
+     */
     private ChessPiece getPiece(ChessBoard board,int row,int col){
         return board.getPiece(getPos(row,col));
     }
@@ -203,13 +238,17 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         ArrayList<ChessMove> moves = new ArrayList<>();
+        //for each position
         for(int row = 1; row<=8; row++){
             for(int col = 1; col<=8; col++){
+                //check if piece is not null, and then checks if the color matches which team we're checking
                 if(getPiece(getPos(row,col)) != null && getPiece(getPos(row,col)).getTeamColor()==teamColor) {
+                    //if it matches, add those pieces moves.
                     moves.addAll(validMoves(getPos(row, col)));
                 }
             }
         }
+        //check if the arraylist doesn't have any moves
         if(moves.isEmpty()){
             return true;
         }
@@ -224,8 +263,10 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = new ChessBoard();
+        //loop through all spots
         for(int row = 1; row<9; row++){
             for(int col = 1; col<9; col++){
+                //add pieces to our board, delete those not there.
                 this.board.addPiece(getPos(row,col),board.getPiece(getPos(row,col)));
             }
         }
