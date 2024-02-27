@@ -47,6 +47,6 @@ public class Server {
     private Object registerUser(Request req, Response res){
         Gson parser = new Gson();
         loginService loginService = parser.fromJson(req.body(), loginService.class);
-        return loginService.register(users,auths);
+        return parser.toJson(loginService.register(users,auths));
     }
 }
