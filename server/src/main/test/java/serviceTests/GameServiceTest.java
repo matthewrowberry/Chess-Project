@@ -1,4 +1,4 @@
-package passoffTests.serviceTests;
+package serviceTests;
 
 import org.junit.jupiter.api.Test;
 
