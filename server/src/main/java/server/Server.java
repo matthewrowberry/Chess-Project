@@ -1,37 +1,35 @@
 package server;
 
-import Records.Registration;
+import Records.FullError;
 import com.google.gson.Gson;
-import dataAccess.AuthDAO;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDao;
-import dataAccess.UserDAO;
+import dataAccess.*;
+import service.DbService;
 import service.loginService;
 import spark.*;
 
 public class Server {
-    private loginService login;
     private UserDAO users;
     private AuthDAO auths;
+    private GameDAO games;
+    Gson parser;
     public int run(int desiredPort) {
         users = new MemoryUserDao();
         auths = new MemoryAuthDAO();
+        games = new MemoryGameDAO();
+        parser = new Gson();
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("homepage");
 
         // Register your endpoints and handle exceptions here.
 
-        /*Spark.delete("/db", new Route() {
-            public Object handle(Request req, Response res) {
-                names.add(req.params(":name"));
-                res.type("application/json");
-                return new Gson().toJson(Map.of("name", names));
-            }
-        });*/
+
+
 
         Spark.post("/user", this::registerUser);
-
+        Spark.post("/session", this::login);
+        Spark.delete("/session/:Authorization",this::logout);
+        Spark.delete("/db",this::clear);
 
 
         Spark.init();
@@ -44,9 +42,42 @@ public class Server {
         Spark.awaitStop();
     }
 
+    private Object returner(Object result, Response res){
+        if(result instanceof FullError){
+            res.status(((FullError) result).number().code());
+            var body = parser.toJson(((FullError) result).message().message());
+            res.body(body);
+            return body;
+
+        }
+        var body = parser.toJson(result);
+        res.status(200);
+        res.body(body);
+        return body;
+    }
     private Object registerUser(Request req, Response res){
-        Gson parser = new Gson();
+
         loginService loginService = parser.fromJson(req.body(), loginService.class);
-        return parser.toJson(loginService.register(users,auths));
+
+        var result = loginService.register(users,auths);
+        return returner(result,res);
+    }
+
+    private Object login(Request req, Response res){
+        loginService loginService = parser.fromJson(req.body(), loginService.class);
+        var result = loginService.login(users,auths);
+        return returner(result,res);
+    }
+
+    private Object logout(Request req, Response res){
+        loginService loginService = new loginService();
+        var result = loginService.logout(auths,req.params(":Authorization"));
+        return returner(result,res);
+    }
+
+    private Object clear(Request req, Response res){
+        DbService dbService = new DbService();
+        dbService.clear(users,auths,games);
+        return null;
     }
 }
