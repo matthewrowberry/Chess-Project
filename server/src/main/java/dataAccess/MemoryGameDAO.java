@@ -32,6 +32,19 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemoryGameDAO that = (MemoryGameDAO) o;
+        return Objects.equals(games, that.games);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(games);
+    }
+
+    @Override
     public List<GameDataRedacted> getGames() {
         List<GameDataRedacted> export = new ArrayList<>();
         for(Map.Entry<Integer,GameData> game : games.entrySet()){
