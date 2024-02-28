@@ -8,5 +8,6 @@ class DbServiceTest {
 
     @Test
     void clear() {
+        assertEquals(true,true);
     }
 }

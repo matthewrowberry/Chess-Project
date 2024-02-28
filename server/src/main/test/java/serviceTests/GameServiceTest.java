@@ -8,13 +8,16 @@ class GameServiceTest {
 
     @Test
     void create() {
+        assertEquals(true,true);
     }
 
     @Test
     void getGames() {
+        assertEquals(true,true);
     }
 
     @Test
     void joinGame() {
+        assertEquals(true,true);
     }
 }

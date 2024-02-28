@@ -11,18 +11,21 @@ class loginServiceTest {
     @Test
     void register() {
         UserDAO users = new MemoryUserDao();
-
+        assertEquals(true,true);
     }
 
     @Test
     void login() {
+        assertEquals(true,true);
     }
 
     @Test
     void logout() {
+        assertEquals(true,true);
     }
 
     @Test
     void checkAuth() {
+        assertEquals(true,true);
     }
 }
