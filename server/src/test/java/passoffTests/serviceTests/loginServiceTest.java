@@ -1,5 +1,6 @@
 package passoffTests.serviceTests;
 
+import Records.FullError;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryUserDao;
 import model.AuthToken;
@@ -10,21 +11,38 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class loginServiceTest {
 
+
     @Test
-    void register() {
+    void registerSuccess() {
         MemoryAuthDAO auths = new MemoryAuthDAO();
         MemoryUserDao users = new MemoryUserDao();
         LoginService loginService = new LoginService("username","password","this@gmail.com");
-        AuthToken result = (AuthToken) loginService.register(users,auths);
-        assertNotNull(result.authToken());
-        assertTrue(result.authToken() instanceof String);
-        assertEquals(result.username(),"username");
+        Object result = (AuthToken) loginService.register(users,auths);
+        assertTrue(result instanceof AuthToken);
+        AuthToken result1 = (AuthToken) result;
+        assertNotNull(result1.authToken());
+        assertEquals(result1.username(),"username");
+
+    }
+
+    @Test
+    void registerError() {
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username",null,"this@gmail.com");
+        Object result = loginService.register(users,auths);
+        assertNotNull(result);
+        assertInstanceOf(FullError.class, result);
+
+        assertEquals(((FullError) result).message().message(),"Error: bad request");
+        assertEquals(((FullError) result).number().code(),400);
+
 
     }
 
     @Test
     void login() {
-        assertEquals(true,true);
+        assertTrue(true);
     }
 
     @Test
