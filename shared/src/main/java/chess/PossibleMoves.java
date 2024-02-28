@@ -24,20 +24,20 @@ public class PossibleMoves {
         this.position = position;
 
         return switch(type){
-            case KING -> King();
-            case QUEEN -> Queen();
-            case BISHOP -> Bishop();
+            case KING -> king();
+            case QUEEN -> queen();
+            case BISHOP -> bishop();
 
 
-            case KNIGHT -> Knight();
-            case ROOK -> Rook();
-            case PAWN -> Pawn();
+            case KNIGHT -> knight();
+            case ROOK -> rook();
+            case PAWN -> pawn();
         };
 
 
     }
 
-    private ArrayList<ChessMove> Bishop(){
+    private ArrayList<ChessMove> bishop(){
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         moves.addAll(getDirection(1,1));
         moves.addAll(getDirection(-1,-1));
@@ -47,7 +47,7 @@ public class PossibleMoves {
 
     }
 
-    private ArrayList<ChessMove> Rook(){
+    private ArrayList<ChessMove> rook(){
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         moves.addAll(getDirection(1,0));
         moves.addAll(getDirection(-1,0));
@@ -58,7 +58,7 @@ public class PossibleMoves {
 
     }
 
-    private ArrayList<ChessMove> Queen(){
+    private ArrayList<ChessMove> queen(){
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         moves.addAll(getDirection(1,1));
         moves.addAll(getDirection(-1,-1));
@@ -72,24 +72,15 @@ public class PossibleMoves {
 
     }
 
-    private ArrayList<ChessMove> Knight(){
+    private ArrayList<ChessMove> knight(){
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         int[][] possibilities = {{2,1},{1,2},{-2,1},{-1,2},{2,-1},{1,-2},{-2,-1},{-1,-2}};
-        for(int i[] : possibilities){
-            if(inBoundsOffset(i[0],i[1]) && getPieceOffset(i[0],i[1]) == null){
-                moves.add(getChessMoveOffset(i[0],i[1]));
-            }
-            else if(inBoundsOffset(i[0],i[1]) && getPieceOffset(i[0],i[1]).getTeamColor() != color){
-                moves.add(getChessMoveOffset(i[0],i[1]));
-            }
-        }
+        addGoodMoves(moves,possibilities);
         return moves;
 
     }
 
-    private ArrayList<ChessMove> King(){
-        ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
-        int[][] possibilities = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,1},{-1,0},{-1,-1}};
+    private void addGoodMoves(ArrayList<ChessMove> moves, int[][] possibilities){
         for(int i[] : possibilities){
             if(inBoundsOffset(i[0],i[1]) && getPieceOffset(i[0],i[1]) == null){
                 moves.add(getChessMoveOffset(i[0],i[1]));
@@ -98,12 +89,17 @@ public class PossibleMoves {
                 moves.add(getChessMoveOffset(i[0],i[1]));
             }
         }
+    }
+    private ArrayList<ChessMove> king(){
+        ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+        int[][] possibilities = {{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,1},{-1,0},{-1,-1}};
+        addGoodMoves(moves,possibilities);
         //if()
 
         return moves;
     }
 
-    private ArrayList<ChessMove> Pawn(){
+    private ArrayList<ChessMove> pawn(){
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         moves.addAll(forward());
         moves.addAll(attack());
@@ -134,7 +130,7 @@ public class PossibleMoves {
             }
         }
         else if(myRow == promote){
-            moves.addAll(PromoteOffset(offset,0));
+            moves.addAll(promoteOffset(offset,0));
         }
         else{
             if(getPieceOffset(offset,0) == null){
@@ -161,10 +157,10 @@ public class PossibleMoves {
 
         if (myRow == promote) {
             if (getPieceOffset(offset, 1) != null && getPieceOffset(offset, 1).getTeamColor() != color) {
-                moves.addAll(PromoteOffset(offset, 1));
+                moves.addAll(promoteOffset(offset, 1));
             }
             if (getPieceOffset(offset, -1) != null && getPieceOffset(offset, -1).getTeamColor() != color) {
-                moves.addAll(PromoteOffset(offset, -1));
+                moves.addAll(promoteOffset(offset, -1));
             }
 
         } else {
@@ -181,7 +177,7 @@ public class PossibleMoves {
 
     }
 
-    private ArrayList<ChessMove> PromoteOffset(int row, int col) {
+    private ArrayList<ChessMove> promoteOffset(int row, int col) {
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
 
         moves.add(getChessMoveOffset(row,col, ChessPiece.PieceType.QUEEN));

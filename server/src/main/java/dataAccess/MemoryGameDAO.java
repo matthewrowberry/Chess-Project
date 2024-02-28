@@ -21,10 +21,10 @@ public class MemoryGameDAO implements GameDAO {
         return games.get(id);
     }
 
-    @Override
+    /*@Override
     public void deleteGame(int id) {
         games.remove(id);
-    }
+    }*/
 
     @Override
     public void updateGame(int id, GameData game) {

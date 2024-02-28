@@ -33,7 +33,7 @@ public class GameService {
     }
 
     public Object create(String authorization, GameDAO games, AuthDAO auths) {
-        loginService loginService = new loginService();
+        LoginService loginService = new LoginService();
         if(loginService.checkAuth(authorization,auths)) {
 
             ChessGame game = new ChessGame();
@@ -45,7 +45,7 @@ public class GameService {
     }
 
     public Object getGames(String authorization, GameDAO games, AuthDAO auths){
-        loginService loginService = new loginService();
+        LoginService loginService = new LoginService();
         if(loginService.checkAuth(authorization,auths)) {
 
             return new GameList(games.getGames());
@@ -55,7 +55,7 @@ public class GameService {
     }
     
     public Object joinGame(String authorization, GameDAO games, AuthDAO auths) {
-        loginService loginService = new loginService();
+        LoginService loginService = new LoginService();
         if (loginService.checkAuth(authorization, auths)) {
             GameData game = games.getGame(gameID);
             if(game == null){

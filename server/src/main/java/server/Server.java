@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import dataAccess.*;
 import service.DbService;
 import service.GameService;
-import service.loginService;
+import service.LoginService;
 import spark.*;
 
 import java.util.Objects;
@@ -66,20 +66,20 @@ public class Server {
     }
     private Object registerUser(Request req, Response res){
 
-        loginService loginService = parser.fromJson(req.body(), loginService.class);
+        LoginService loginService = parser.fromJson(req.body(), LoginService.class);
 
         var result = loginService.register(users,auths);
         return returner(result,res);
     }
 
     private Object login(Request req, Response res){
-        loginService loginService = parser.fromJson(req.body(), loginService.class);
+        LoginService loginService = parser.fromJson(req.body(), LoginService.class);
         var result = loginService.login(users,auths);
         return returner(result,res);
     }
 
     private Object logout(Request req, Response res){
-        loginService loginService = new loginService();
+        LoginService loginService = new LoginService();
         var result = loginService.logout(auths,req.headers("authorization"));
         return returner(result,res);
     }

@@ -10,20 +10,20 @@ import model.UserData;
 import java.util.Objects;
 import java.util.UUID;
 
-public class loginService {
+public class LoginService {
     private String username, password, email;
-    public loginService(String username, String password, String email){
+    public LoginService(String username, String password, String email){
         this.username = username;
         this.password = password;
         this.email = email;
     }
 
-    public loginService(String username, String password){
-        new loginService(username,password,null);
+    public LoginService(String username, String password){
+        new LoginService(username,password,null);
     }
 
-    public loginService(){
-        new loginService(null,null,null);
+    public LoginService(){
+        new LoginService(null,null,null);
     }
 
     private AuthToken getAuth(String username, AuthDAO auths){

@@ -145,7 +145,7 @@ public class ChessGame {
                 //save position
                 ChessPosition tempPos = getPos(row,col);
                 //if the piece is the other color, check if that pieces moves include a move that kills our king
-                if(newBoard.getPiece(tempPos)!= null && newBoard.getPiece(tempPos).getTeamColor() != teamColor && CheckForCheck(newBoard.getPiece(tempPos).pieceMoves(newBoard,tempPos),king)){
+                if(newBoard.getPiece(tempPos)!= null && newBoard.getPiece(tempPos).getTeamColor() != teamColor && checkForCheck(newBoard.getPiece(tempPos).pieceMoves(newBoard,tempPos),king)){
                     return true;
                 }
             }
@@ -159,7 +159,7 @@ public class ChessGame {
      * @param king - position of king
      * @return - true if position king is in danger.
      */
-    private boolean CheckForCheck(Collection<ChessMove> moves,ChessPosition king){
+    private boolean checkForCheck(Collection<ChessMove> moves,ChessPosition king){
         //for each move put in
         for(ChessMove move : moves){
             //check if one of the endpositions is the king of the other team.

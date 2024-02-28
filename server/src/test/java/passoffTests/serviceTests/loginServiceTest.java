@@ -4,7 +4,7 @@ import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryUserDao;
 import model.AuthToken;
 import org.junit.jupiter.api.Test;
-import service.loginService;
+import service.LoginService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +14,7 @@ class loginServiceTest {
     void register() {
         MemoryAuthDAO auths = new MemoryAuthDAO();
         MemoryUserDao users = new MemoryUserDao();
-        loginService loginService = new loginService("username","password","this@gmail.com");
+        LoginService loginService = new LoginService("username","password","this@gmail.com");
         AuthToken result = (AuthToken) loginService.register(users,auths);
         assertNotNull(result.authToken());
         assertTrue(result.authToken() instanceof String);
