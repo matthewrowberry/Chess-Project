@@ -12,9 +12,9 @@ import service.DbService;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DbServiceTest {
-/*
+
     @Test
-    void clear() {
+    void clearTest() {
         MemoryAuthDAO auths = new MemoryAuthDAO();
         MemoryGameDAO games = new MemoryGameDAO();
         MemoryUserDao users = new MemoryUserDao();
@@ -29,5 +29,5 @@ class DbServiceTest {
         assertEquals(auths1,auths);
         assertEquals(games1,games);
         assertEquals(users1,users);
-    }*/
+    }
 }
