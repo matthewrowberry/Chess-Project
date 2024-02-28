@@ -38,6 +38,7 @@ public class Server {
         Spark.delete("/db", this::clear);
         Spark.post("/game",this::createGame);
         Spark.get("/game",this::getGames);
+        Spark.put("/game",this::joinGame);
 
 
         Spark.init();
@@ -92,10 +93,14 @@ public class Server {
     private boolean authExists(Request req){
         return req.headers("authorization")==null || Objects.equals(req.headers("authorization"), "");
     }
+
+    private Object badRequest(Request req, Response res){
+        return returner(new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request")),res);
+    }
     private Object createGame(Request req, Response res){
 
         if(authExists(req)){
-            return returner(new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request")),res);
+            return badRequest(req,res);
         }
 
         GameService gameService = parser.fromJson(req.body(), GameService.class);
@@ -107,10 +112,20 @@ public class Server {
     }
     private Object getGames(Request req, Response res){
         if(authExists(req)){
-            return returner(new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request")),res);
+            return badRequest(req,res);
         }
         GameService gameService = new GameService();
         Object result = gameService.getGames(req.headers("authorization"),games,auths);
+        return returner(result,res);
+    }
+
+    private Object joinGame(Request req, Response res){
+        if(authExists(req)){
+            return badRequest(req,res);
+        }
+
+        GameService gameService = new GameService();
+        Object result = gameService.joinGame(req.headers("authorization"),games,auths);
         return returner(result,res);
     }
 }

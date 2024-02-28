@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.GameData;
+import model.GameDataRedacted;
 
 import java.util.*;
 
@@ -31,10 +32,11 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public List<GameData> getGames() {
-        List<GameData> export = new ArrayList<>();
+    public List<GameDataRedacted> getGames() {
+        List<GameDataRedacted> export = new ArrayList<>();
         for(Map.Entry<Integer,GameData> game : games.entrySet()){
-            export.add(game.getValue());
+            GameData gameValue = game.getValue();
+            export.add(new GameDataRedacted(gameValue.gameID(),gameValue.whiteUsername(),gameValue.blackUsername(),gameValue.gameName()));
         }
         return export;
     }
