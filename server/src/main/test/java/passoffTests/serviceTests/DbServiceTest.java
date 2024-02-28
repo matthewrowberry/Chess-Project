@@ -1,13 +1,11 @@
-package serviceTests;
+package passoffTests.serviceTests;
 
 import chess.ChessGame;
-import dataAccess.GameDAO;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
 import dataAccess.MemoryUserDao;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Test;
 import service.DbService;
 

@@ -1,9 +1,6 @@
-package serviceTests;
+package passoffTests.serviceTests;
 
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDao;
 import org.junit.jupiter.api.Test;
-import service.GameService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

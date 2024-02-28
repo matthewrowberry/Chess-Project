@@ -1,8 +1,7 @@
-package serviceTests;
+package passoffTests.serviceTests;
 
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryUserDao;
-import dataAccess.UserDAO;
 import model.AuthToken;
 import org.junit.jupiter.api.Test;
 import service.loginService;
