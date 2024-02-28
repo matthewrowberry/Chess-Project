@@ -34,10 +34,7 @@ public class ChessBoard {
         }
     }
 
-    /*public void undoMove(ChessMove move){
-        board[move.getStartPosition().getRow()-1][move.getStartPosition().getColumn()-1] = board[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1];
-        board[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1] = null;
-    }*/
+
 
     @Override
     public String toString() {
