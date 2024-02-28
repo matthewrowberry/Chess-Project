@@ -1,7 +1,6 @@
 package dataAccess;
 
-import Records.AuthToken;
-import Records.User;
+import model.UserData;
 
 public interface AuthDAO extends DAO{
 
@@ -9,5 +8,5 @@ public interface AuthDAO extends DAO{
 
     public void deleteAuth(String authToken);
 
-    public User checkAuth(String authToken);
+    public UserData checkAuth(String authToken);
 }

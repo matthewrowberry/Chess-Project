@@ -4,6 +4,8 @@ import Records.*;
 
 import dataAccess.AuthDAO;
 import dataAccess.UserDAO;
+import model.AuthToken;
+import model.UserData;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -24,20 +26,20 @@ public class loginService {
         new loginService(null,null,null);
     }
 
-    private AuthToken getAuth(String username,AuthDAO auths){
+    private AuthToken getAuth(String username, AuthDAO auths){
         String authToken = UUID.randomUUID().toString();
         auths.createAuth(username,authToken);
         return new AuthToken(username,authToken);
     }
 
     public Object register(UserDAO users, AuthDAO auths){
-        User user = new User(username,password,email);
+        UserData userData = new UserData(username,password,email);
         if(username==null || password==null || email==null){
             return new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request"));
         }
 
-        if(users.getUser(user)==null){
-            users.createUser(user);
+        if(users.getUser(userData)==null){
+            users.createUser(userData);
             return getAuth(username,auths);
         }
         else{
@@ -48,9 +50,9 @@ public class loginService {
 
     public Object login(UserDAO users, AuthDAO auths){
 
-        User user = new User(username,password,null);
-        user = users.getUser(user);
-        if(user!= null && Objects.equals(password, user.password())){
+        UserData userData = new UserData(username,password,null);
+        userData = users.getUser(userData);
+        if(userData != null && Objects.equals(password, userData.password())){
             return getAuth(username,auths);
 
         }
@@ -69,5 +71,9 @@ public class loginService {
             return new FullError(new ErrorNumber(401),new ErrorMessage("Error: unauthorized"));
         }
 
+    }
+
+    public boolean checkAuth(String authToken, AuthDAO auths){
+        return auths.checkAuth(authToken).username() != null;
     }
 }

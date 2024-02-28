@@ -1,10 +1,10 @@
 package dataAccess;
 
-import Records.User;
+import model.UserData;
 
 public interface UserDAO extends DAO{
 
-    public void createUser(User user);
+    public void createUser(UserData userData);
 
-    public User getUser(User user);
+    public UserData getUser(UserData userData);
 }

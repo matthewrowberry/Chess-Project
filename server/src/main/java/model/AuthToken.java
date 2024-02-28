@@ -1,4 +1,4 @@
-package Records;
+package model;
 
 public record AuthToken(String username, String authToken) {
 }

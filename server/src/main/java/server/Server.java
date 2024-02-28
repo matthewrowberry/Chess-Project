@@ -1,12 +1,17 @@
 package server;
 
+import Records.ErrorMessage;
+import Records.ErrorNumber;
 import Records.FullError;
-import Records.User;
+import model.UserData;
 import com.google.gson.Gson;
 import dataAccess.*;
 import service.DbService;
+import service.GameService;
 import service.loginService;
 import spark.*;
+
+import java.util.Objects;
 
 public class Server {
     private UserDAO users;
@@ -80,10 +85,20 @@ public class Server {
     private Object clear(Request req, Response res){
         DbService dbService = new DbService();
         dbService.clear(users,auths,games);
-        return returner(new User(null,null,null),res);
+        return returner(new UserData(null,null,null),res);
     }
 
     private Object createGame(Request req, Response res){
+
+        if(req.headers("authorization")==null || Objects.equals(req.headers("authorization"), "")){
+            return returner(new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request")),res);
+        }
+
+        GameService gameService = parser.fromJson(req.body(), GameService.class);
+
+        Object result = gameService.create(req.headers("authorization"),games,auths);
+
+        return returner(result,res);
 
     }
 }

@@ -1,7 +1,6 @@
 package dataAccess;
 
-import Records.AuthToken;
-import Records.User;
+import model.UserData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +24,8 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public User checkAuth(String authToken) {
-        return new User(auths.get(authToken),null,null);
+    public UserData checkAuth(String authToken) {
+        return new UserData(auths.get(authToken),null,null);
     }
 
     @Override

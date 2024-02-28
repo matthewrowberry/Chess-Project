@@ -1,5 +1,18 @@
 package dataAccess;
 
-public interface GameDAO extends DAO {
+import model.GameData;
 
+import java.util.HashMap;
+import java.util.Map;
+
+public interface GameDAO extends DAO {
+    public GameData getGame(int id);
+
+
+    public void deleteGame(int id);
+
+    public void updateGame(int id,GameData game);
+
+    public Map<Integer,GameData> getGames();
+    public int insertGame(GameData game);
 }

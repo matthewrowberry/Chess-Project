@@ -1,24 +1,24 @@
 package dataAccess;
 
-import Records.User;
+import model.UserData;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryUserDao implements UserDAO{
-    private Map<String, User> users;
+    private Map<String, UserData> users;
     public MemoryUserDao(){
         users = new HashMap<>();
     }
 
     @Override
-    public void createUser(User user) {
-        users.put(user.username(),user);
+    public void createUser(UserData userData) {
+        users.put(userData.username(), userData);
     }
 
     @Override
-    public User getUser(User user) {
-        return users.get(user.username());
+    public UserData getUser(UserData userData) {
+        return users.get(userData.username());
     }
 
     @Override
