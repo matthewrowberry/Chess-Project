@@ -1,6 +1,7 @@
 package server;
 
 import Records.FullError;
+import Records.User;
 import com.google.gson.Gson;
 import dataAccess.*;
 import service.DbService;
@@ -28,8 +29,9 @@ public class Server {
 
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
-        Spark.delete("/session/:Authorization",this::logout);
-        Spark.delete("/db",this::clear);
+        Spark.delete("/session",this::logout);
+        Spark.delete("/db", this::clear);
+        Spark.post("/game",this::createGame);
 
 
         Spark.init();
@@ -45,7 +47,7 @@ public class Server {
     private Object returner(Object result, Response res){
         if(result instanceof FullError){
             res.status(((FullError) result).number().code());
-            var body = parser.toJson(((FullError) result).message().message());
+            var body = parser.toJson(((FullError) result).message());
             res.body(body);
             return body;
 
@@ -71,13 +73,17 @@ public class Server {
 
     private Object logout(Request req, Response res){
         loginService loginService = new loginService();
-        var result = loginService.logout(auths,req.params(":Authorization"));
+        var result = loginService.logout(auths,req.headers("authorization"));
         return returner(result,res);
     }
 
     private Object clear(Request req, Response res){
         DbService dbService = new DbService();
         dbService.clear(users,auths,games);
-        return null;
+        return returner(new User(null,null,null),res);
+    }
+
+    private Object createGame(Request req, Response res){
+
     }
 }

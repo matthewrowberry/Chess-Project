@@ -50,7 +50,7 @@ public class loginService {
 
         User user = new User(username,password,null);
         user = users.getUser(user);
-        if(Objects.equals(password, user.password())){
+        if(user!= null && Objects.equals(password, user.password())){
             return getAuth(username,auths);
 
         }
