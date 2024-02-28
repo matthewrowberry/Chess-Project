@@ -124,7 +124,7 @@ public class Server {
             return badRequest(req,res);
         }
 
-        GameService gameService = new GameService();
+        GameService gameService = parser.fromJson(req.body(), GameService.class);
         Object result = gameService.joinGame(req.headers("authorization"),games,auths);
         return returner(result,res);
     }

@@ -37,7 +37,7 @@ public class GameService {
         if(loginService.checkAuth(authorization,auths)) {
 
             ChessGame game = new ChessGame();
-            GameData insert = new GameData(0, "", "", gameName, game);
+            GameData insert = new GameData(0, null, null, gameName, game);
 
             return new GameID(games.insertGame(insert));
         }
@@ -58,8 +58,12 @@ public class GameService {
         loginService loginService = new loginService();
         if (loginService.checkAuth(authorization, auths)) {
             GameData game = games.getGame(gameID);
+            if(game == null){
+                return new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request"));
+
+            }
             if(Objects.equals(playerColor, "WHITE")){
-                if(Objects.equals(game.whiteUsername(), "")){
+                if(Objects.equals(game.whiteUsername(), "null")||game.whiteUsername()==null){
                     GameData update = new GameData(game.gameID(),auths.getUsername(authorization),game.blackUsername(),game.gameName(),game.game());
                     games.updateGame(gameID,update);
                     return new UserData(null,null,null);
@@ -71,7 +75,7 @@ public class GameService {
                 }
             }
             else if(Objects.equals(playerColor, "BLACK")){
-                if(Objects.equals(game.blackUsername(), "")){
+                if(Objects.equals(game.blackUsername(), "null")||game.blackUsername()==null){
                     GameData update = new GameData(game.gameID(),game.whiteUsername(),auths.getUsername(authorization),game.gameName(),game.game());
                     games.updateGame(gameID,update);
                     return new UserData(null,null,null);
@@ -81,7 +85,8 @@ public class GameService {
                     return new FullError(new ErrorNumber(403),new ErrorMessage("Error: already taken"));
 
                 }
-            } else if (playerColor == "") {
+            } else if (Objects.equals(playerColor, "")||playerColor==null) {
+                System.out.println("hi");
                 return new UserData(null,null,null);
 
             } else{

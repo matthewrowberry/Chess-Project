@@ -8,27 +8,27 @@ import java.util.*;
 public class MemoryGameDAO implements GameDAO {
     Map<Integer,GameData> games;
     public MemoryGameDAO(){
-        games = new HashMap<>();
+        games = new LinkedHashMap<>();
     }
 
     @Override
     public void clear() {
-
+        games.clear();
     }
 
     @Override
     public GameData getGame(int id) {
-        return null;
+        return games.get(id);
     }
 
     @Override
     public void deleteGame(int id) {
-
+        games.remove(id);
     }
 
     @Override
     public void updateGame(int id, GameData game) {
-
+        games.put(id,game);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class MemoryGameDAO implements GameDAO {
         List<GameDataRedacted> export = new ArrayList<>();
         for(Map.Entry<Integer,GameData> game : games.entrySet()){
             GameData gameValue = game.getValue();
-            export.add(new GameDataRedacted(gameValue.gameID(),gameValue.whiteUsername(),gameValue.blackUsername(),gameValue.gameName()));
+            export.addLast(new GameDataRedacted(gameValue.gameID(),gameValue.whiteUsername(),gameValue.blackUsername(),gameValue.gameName()));
         }
         return export;
     }
