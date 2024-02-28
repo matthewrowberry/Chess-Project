@@ -14,8 +14,8 @@ import model.UserData;
 import java.util.Objects;
 
 public class GameService {
-    String gameName,playerColor;
-    int gameID;
+    private String gameName,playerColor;
+    private int gameID;
     
     public GameService(String gameName,String playerColor,int gameID){
         this.gameName = gameName;
@@ -23,13 +23,13 @@ public class GameService {
         this.gameID = gameID;
     }
     public GameService(String gameName){
-        new GameService(gameName,null,-1);
+        this(gameName,null,-1);
     }
     public GameService(){
-        new GameService(null,null,-1);
+        this(null,null,-1);
     }
     public GameService(String playerColor, int gameID){
-        new GameService(null, playerColor,gameID);
+        this(null, playerColor,gameID);
     }
 
     public Object create(String authorization, GameDAO games, AuthDAO auths) {
@@ -41,7 +41,7 @@ public class GameService {
 
             return new GameID(games.insertGame(insert));
         }
-        return new FullError(new ErrorNumber(401),new ErrorMessage("Error: Unauthorized"));
+        return new FullError(new ErrorNumber(401),new ErrorMessage("Error: unauthorized"));
     }
 
     public Object getGames(String authorization, GameDAO games, AuthDAO auths){
@@ -50,7 +50,7 @@ public class GameService {
 
             return new GameList(games.getGames());
         }
-        return new FullError(new ErrorNumber(401),new ErrorMessage("Error: Unauthorized"));
+        return new FullError(new ErrorNumber(401),new ErrorMessage("Error: unauthorized"));
 
     }
     

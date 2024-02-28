@@ -42,16 +42,87 @@ class loginServiceTest {
 
     @Test
     void login() {
-        assertTrue(true);
+
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username","password","this@gmail.com");
+        loginService.register(users,auths);
+
+
+        Object result =  loginService.login(users,auths);
+        assertInstanceOf(AuthToken.class,result);
+        AuthToken result1 = (AuthToken) result;
+        assertNotNull( result1.authToken());
+        assertEquals("username",result1.username());
+
+    }
+
+    @Test
+    void loginError() {
+
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username","password","this@gmail.com");
+        loginService.register(users,auths);
+
+        loginService = new LoginService("username","password1");
+
+        Object result =  loginService.login(users,auths);
+        assertInstanceOf(FullError.class,result);
+        FullError result1 = (FullError) result;
+        assertEquals(401,result1.number().code());
+        assertEquals("Error: unauthorized",result1.message().message());
+
     }
 
     @Test
     void logout() {
-        assertEquals(true,true);
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username","password","this@gmail.com");
+        AuthToken authToken = (AuthToken) loginService.register(users,auths);
+        String auth = authToken.authToken();
+
+        assertTrue(loginService.checkAuth(auth,auths));
+
+        loginService.logout(auths, auth);
+        assertFalse(loginService.checkAuth(auth,auths));
+
+
+    }
+
+    @Test
+    void logoutError() {
+
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username","password","this@gmail.com");
+
+
+        assertInstanceOf(FullError.class,loginService.logout(auths, "hi"));
+
     }
 
     @Test
     void checkAuth() {
-        assertEquals(true,true);
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username","password","this@gmail.com");
+        AuthToken authToken = (AuthToken) loginService.register(users,auths);
+        String auth = authToken.authToken();
+
+        assertTrue(loginService.checkAuth(auth,auths));
+
+    }
+
+    @Test
+    void checkWrongAuth() {
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username","password","this@gmail.com");
+        AuthToken authToken = (AuthToken) loginService.register(users,auths);
+        String auth = authToken.authToken();
+
+        assertFalse(loginService.checkAuth("hello world",auths));
     }
 }
