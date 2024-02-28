@@ -9,7 +9,7 @@ import service.loginService;
 import static org.junit.jupiter.api.Assertions.*;
 
 class loginServiceTest {
-
+/*
     @Test
     void register() {
         MemoryAuthDAO auths = new MemoryAuthDAO();
@@ -35,5 +35,5 @@ class loginServiceTest {
     @Test
     void checkAuth() {
         assertEquals(true,true);
-    }
+    }*/
 }

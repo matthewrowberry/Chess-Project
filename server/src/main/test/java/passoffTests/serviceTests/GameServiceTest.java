@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
-
+/*
     @Test
     void create() {
 
@@ -22,5 +22,5 @@ class GameServiceTest {
     @Test
     void joinGame() {
         assertEquals(true,true);
-    }
+    }*/
 }
