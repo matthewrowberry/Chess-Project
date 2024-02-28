@@ -3,6 +3,7 @@ package dataAccess;
 import model.GameData;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface GameDAO extends DAO {
@@ -13,6 +14,6 @@ public interface GameDAO extends DAO {
 
     public void updateGame(int id,GameData game);
 
-    public Map<Integer,GameData> getGames();
+    public List<GameData> getGames();
     public int insertGame(GameData game);
 }

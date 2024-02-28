@@ -14,7 +14,9 @@ public class GameService {
     public GameService(String gameName){
         this.gameName = gameName;
     }
-
+    public GameService(){
+        new GameService(null);
+    }
 
     public Object create(String authorization, GameDAO games, AuthDAO auths) {
         loginService loginService = new loginService();
@@ -26,5 +28,15 @@ public class GameService {
             return new GameID(games.insertGame(insert));
         }
         return new FullError(new ErrorNumber(401),new ErrorMessage("Error: Unauthorized"));
+    }
+
+    public Object getGames(String authorization, GameDAO games, AuthDAO auths){
+        loginService loginService = new loginService();
+        if(loginService.checkAuth(authorization,auths)) {
+
+            return games.getGames();
+        }
+        return new FullError(new ErrorNumber(401),new ErrorMessage("Error: Unauthorized"));
+
     }
 }

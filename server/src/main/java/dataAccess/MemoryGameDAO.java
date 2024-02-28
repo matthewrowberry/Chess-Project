@@ -2,9 +2,7 @@ package dataAccess;
 
 import model.GameData;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class MemoryGameDAO implements GameDAO {
     Map<Integer,GameData> games;
@@ -33,8 +31,12 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public Map<Integer, GameData> getGames() {
-        return games;
+    public List<GameData> getGames() {
+        List<GameData> export = new ArrayList<>();
+        for(Map.Entry<Integer,GameData> game : games.entrySet()){
+            export.add(game.getValue());
+        }
+        return export;
     }
 
     @Override
