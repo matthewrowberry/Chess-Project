@@ -27,7 +27,9 @@ class GameServiceTest {
         String auth = generate.generateAuth(users, auths);
         GameService gameService = new GameService();
         GameID gameID = (GameID) gameService.create(auth,games,auths);
-        assertTrue(0<gameID.gameID());
+        assertNotNull(gameID);
+        assertTrue(0<gameID.gameID()&&1001>gameID.gameID());
+
 
     }
 
@@ -107,6 +109,94 @@ class GameServiceTest {
     }
 
     @Test
+    void joinNullGameBlack() {
+
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        MemoryGameDAO games = new MemoryGameDAO();
+        GameService gameService = new GameService();
+        Generate generate = new Generate();
+        String auth = generate.generateAuth(users, auths);
+        int id = generate.createGame(auth,games,auths);
+        GameService gameService1 = new GameService("BLACK",-1);
+        assertInstanceOf(FullError.class,gameService1.joinGame(auth,games,auths));
+        FullError error = (FullError) gameService1.joinGame(auth,games,auths);
+        assertEquals(400,error.number().code());
+        assertEquals("Error: bad request",error.message().message());
+    }
+
+    @Test
+    void joinGameBlackAgain() {
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        MemoryGameDAO games = new MemoryGameDAO();
+        GameService gameService = new GameService();
+        Generate generate = new Generate();
+        String auth = generate.generateAuth(users, auths);
+        int id = generate.createGame(auth,games,auths);
+        GameService gameService1 = new GameService("BLACK",id);
+        assertInstanceOf(UserData.class,gameService1.joinGame(auth,games,auths));
+        GameList list = (GameList) gameService1.getGames(auth,games,auths);
+        assertEquals("username",list.games().getFirst().blackUsername());
+        gameService1 = new GameService("BLACK",id);
+        assertInstanceOf(UserData.class,gameService1.joinGame(auth,games,auths));
+        list = (GameList) gameService1.getGames(auth,games,auths);
+        assertEquals("username",list.games().getFirst().blackUsername());
+    }
+
+    @Test
+    void joinGameWhiteAgain() {
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        MemoryGameDAO games = new MemoryGameDAO();
+        GameService gameService = new GameService();
+        Generate generate = new Generate();
+        String auth = generate.generateAuth(users, auths);
+        int id = generate.createGame(auth,games,auths);
+        GameService gameService1 = new GameService("WHITE",id);
+        assertInstanceOf(UserData.class,gameService1.joinGame(auth,games,auths));
+        GameList list = (GameList) gameService1.getGames(auth,games,auths);
+        assertEquals("username",list.games().getFirst().whiteUsername());
+        gameService1 = new GameService("WHITE",id);
+        assertInstanceOf(UserData.class,gameService1.joinGame(auth,games,auths));
+        list = (GameList) gameService1.getGames(auth,games,auths);
+        assertEquals("username",list.games().getFirst().whiteUsername());
+    }
+
+    @Test
+    void joinGameBlackMisspelled() {
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        MemoryGameDAO games = new MemoryGameDAO();
+        GameService gameService = new GameService();
+        Generate generate = new Generate();
+        String auth = generate.generateAuth(users, auths);
+        int id = generate.createGame(auth,games,auths);
+        GameService gameService1 = new GameService("BLOCK",id);
+        assertInstanceOf(FullError.class,gameService1.joinGame(auth,games,auths));
+        FullError error = (FullError) gameService1.joinGame(auth,games,auths);
+        assertEquals(400,error.number().code());
+        assertEquals("Error: bad request",error.message().message());
+    }
+
+    @Test
+    void joinGameBlackUnauthorized() {
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        MemoryGameDAO games = new MemoryGameDAO();
+        GameService gameService = new GameService();
+        Generate generate = new Generate();
+        String auth = generate.generateAuth(users, auths);
+        int id = generate.createGame(auth,games,auths);
+        GameService gameService1 = new GameService("BLACK",id);
+        auth = "invalid";
+        assertInstanceOf(FullError.class,gameService1.joinGame(auth,games,auths));
+        FullError error = (FullError) gameService1.joinGame(auth,games,auths);
+        assertEquals(401,error.number().code());
+        assertEquals("Error: unauthorized",error.message().message());
+        }
+
+    @Test
     void joinGameSpectator() {
         MemoryAuthDAO auths = new MemoryAuthDAO();
         MemoryUserDao users = new MemoryUserDao();
@@ -165,4 +255,5 @@ class GameServiceTest {
 
 
     }
+
 }

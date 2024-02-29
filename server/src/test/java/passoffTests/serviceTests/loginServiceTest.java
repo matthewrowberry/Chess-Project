@@ -26,6 +26,23 @@ class loginServiceTest {
     }
 
     @Test
+    void doubleRegisterFail() {
+        MemoryAuthDAO auths = new MemoryAuthDAO();
+        MemoryUserDao users = new MemoryUserDao();
+        LoginService loginService = new LoginService("username", "password", "this@gmail.com");
+        Object result = (AuthToken) loginService.register(users, auths);
+        assertTrue(result instanceof AuthToken);
+        AuthToken result1 = (AuthToken) result;
+        assertNotNull(result1.authToken());
+        assertEquals(result1.username(), "username");
+
+        result = loginService.register(users, auths);
+        assertInstanceOf(FullError.class, result);
+        FullError result2 = (FullError) result;
+        assertEquals(((FullError) result2).message().message(), "Error: already taken");
+        assertEquals(((FullError) result2).number().code(), 403);
+    }
+        @Test
     void registerError() {
         MemoryAuthDAO auths = new MemoryAuthDAO();
         MemoryUserDao users = new MemoryUserDao();

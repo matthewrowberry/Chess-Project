@@ -19,11 +19,11 @@ public class LoginService {
     }
 
     public LoginService(String username, String password){
-        new LoginService(username,password,null);
+        this(username,password,null);
     }
 
     public LoginService(){
-        new LoginService(null,null,null);
+        this(null,null,null);
     }
 
     private AuthToken getAuth(String username, AuthDAO auths){

@@ -22,9 +22,7 @@ public class GameService {
         this.playerColor = playerColor;
         this.gameID = gameID;
     }
-    public GameService(String gameName){
-        this(gameName,null,-1);
-    }
+
     public GameService(){
         this(null,null,-1);
     }
@@ -94,6 +92,6 @@ public class GameService {
             
             }
         }
-        return new FullError(new ErrorNumber(401),new ErrorMessage("Error: Unauthorized"));
+        return new FullError(new ErrorNumber(401),new ErrorMessage("Error: unauthorized"));
     }
 }
