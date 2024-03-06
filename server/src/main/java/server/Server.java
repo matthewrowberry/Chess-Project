@@ -11,14 +11,17 @@ import service.GameService;
 import service.LoginService;
 import spark.*;
 
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class Server {
     private UserDAO users;
     private AuthDAO auths;
     private GameDAO games;
+    private DatabaseUserDao users2;
     Gson parser;
-    public int run(int desiredPort) {
+    public int run(int desiredPort) throws Exception {
+        users2 = new DatabaseUserDao();
         users = new MemoryUserDao();
         auths = new MemoryAuthDAO();
         games = new MemoryGameDAO();
