@@ -45,44 +45,32 @@ public class DatabaseUserDao implements UserDAO{
 
     @Override
     public void clear() {
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("TRUNCATE users");
+        DatabaseManager.executeUpdate("TRUNCATE users");
 
-            statement.executeUpdate();
-        } catch (DataAccessException | SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     public void createUser(UserData userData) {
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("INSERT INTO users (username, password, email) VALUES(?,?,?);");
-            statement.setString(1, userData.username());
-            statement.setString(2, userData.password());
-            statement.setString(3, userData.email());
-            statement.executeUpdate();
-        } catch (DataAccessException | SQLException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseManager.executeUpdate("INSERT INTO users (username, password, email) VALUES(?,?,?);",userData.username(),userData.password(),userData.email());
+
 
     }
 
     @Override
     public UserData getUser(UserData userData) {
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("SELECT username, password, email FROM users WHERE username=?");
-            statement.setString(1, userData.username());
+        try (Connection conn = DatabaseManager.getConnection();){
 
-            var rs = statement.executeQuery();
+            try(var statement = conn.prepareStatement("SELECT username, password, email FROM users WHERE username=?");) {
+                statement.setString(1, userData.username());
 
-            if(rs.next()) {
-                return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
-            }else{
-                return null;
+                try(var rs = statement.executeQuery();) {
+
+                    if (rs.next()) {
+                        return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
+                    } else {
+                        return null;
+                    }
+                }
             }
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
