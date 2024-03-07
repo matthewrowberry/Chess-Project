@@ -1,5 +1,8 @@
 package dataAccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
+
 import java.sql.*;
 import java.util.Properties;
 
@@ -69,13 +72,14 @@ public class DatabaseManager {
     }
 
     static void executeUpdate(String statement, Object... params){
+        Gson parser = new Gson();
         try (var conn = getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
                     if (param instanceof String p) ps.setString(i + 1, p);
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param instanceof ChessGame p) ps.setString(i + 1, parser.toJson(p) );
                     else if (param == null) ps.setNull(i + 1, Types.NULL);
                 }
                 ps.executeUpdate();
