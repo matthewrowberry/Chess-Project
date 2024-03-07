@@ -1,9 +1,12 @@
 package dataAccess;
 
+import model.UserData;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-public class DatabaseUserDao {
+public class DatabaseUserDao implements UserDAO{
     DatabaseManager database;
     public DatabaseUserDao() throws DataAccessException, SQLException {
 
@@ -17,12 +20,11 @@ public class DatabaseUserDao {
     private final String[] createStatement = {
             """
             CREATE TABLE IF NOT EXISTS  users (
-              `username` varchar NOT NULL AUTO_INCREMENT,
-              `password` varchar(255) NOT NULL,
-              `email` ENUM('CAT', 'DOG', 'FISH', 'FROG', 'ROCK') DEFAULT 'CAT',
-              `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`username`),
-            )
+                          `username` varchar(255) NOT NULL,
+                          `password` varchar(255) NOT NULL,
+                          `email` varchar(255) NOT NULL,
+                          PRIMARY KEY (`username`)
+                        )
             """
     };
 
@@ -41,6 +43,44 @@ public class DatabaseUserDao {
     }
 
 
+    @Override
+    public void clear() {
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            var statement = conn.prepareStatement("TRUNCATE users");
 
+            statement.executeUpdate();
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    @Override
+    public void createUser(UserData userData) {
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            var statement = conn.prepareStatement("INSERT INTO users (username, password, email) VALUES(?,?,?);");
+            statement.setString(1, userData.username());
+            statement.setString(2, userData.password());
+            statement.setString(3, userData.email());
+            statement.executeUpdate();
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public UserData getUser(UserData userData) {
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            var statement = conn.prepareStatement("SELECT username, password, email FROM pet WHERE username=?");
+            statement.setString(1, userData.username());
+
+            var rs = statement.executeQuery();
+            return new UserData(rs.getString("username"),rs.getString("password"),rs.getString("email"));
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
