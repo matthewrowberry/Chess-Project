@@ -68,13 +68,30 @@ public class DatabaseManager {
         }
     }
 
-    static ResultSet query(Connection conn,PreparedStatement statement) throws DataAccessException {
+    static void executeUpdate(String statement, Object... params){
+        try (var conn = getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
+                    else if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param == null) ps.setNull(i + 1, Types.NULL);
+                }
+                ps.executeUpdate();
 
-       try (var rs = statement.executeQuery()) {
-                return rs;
 
+            }
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            try {
+                throw new SQLException(e);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
+
+
 }

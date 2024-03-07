@@ -78,6 +78,7 @@ public class DatabaseUserDao implements UserDAO{
             statement.setString(1, userData.username());
 
             var rs = statement.executeQuery();
+
             if(rs.next()) {
                 return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }else{

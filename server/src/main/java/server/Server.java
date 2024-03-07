@@ -23,7 +23,8 @@ public class Server {
     public int run(int desiredPort) throws Exception {
         users = new DatabaseUserDao();
         //users = new MemoryUserDao();
-        auths = new MemoryAuthDAO();
+        auths = new DatabaseAuthDao();
+
         games = new MemoryGameDAO();
         parser = new Gson();
         Spark.port(desiredPort);
@@ -62,10 +63,15 @@ public class Server {
             return body;
 
         }
+
         var body = parser.toJson(result);
         res.status(200);
         res.body(body);
         return body;
+
+
+
+
     }
     private Object registerUser(Request req, Response res){
 

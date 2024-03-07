@@ -3,6 +3,7 @@ package dataAccess;
 import model.UserData;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseAuthDao implements AuthDAO{
@@ -18,7 +19,7 @@ public class DatabaseAuthDao implements AuthDAO{
     public void createAuth(String username, String authToken) {
         try {
             Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("INSERT INTO users (authToken, username) VALUES(?,?);");
+            var statement = conn.prepareStatement("INSERT INTO auths (authToken, username) VALUES(?,?);");
             statement.setString(1, authToken);
             statement.setString(2, username);
 
@@ -43,6 +44,7 @@ public class DatabaseAuthDao implements AuthDAO{
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
+
             for (var statement : createStatement) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
@@ -55,30 +57,23 @@ public class DatabaseAuthDao implements AuthDAO{
 
     @Override
     public void deleteAuth(String authToken) {
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("DELETE FROM pet WHERE authToken=?");
-            statement.setString(1, authToken);
-
-            statement.executeUpdate();
-
-        } catch (DataAccessException | SQLException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseManager.executeUpdate("DELETE FROM auths WHERE authToken=?",authToken);
     }
 
     @Override
     public String getUsername(String auth) {
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("SELECT username FROM users WHERE authToken=?");
-            statement.setString(1, auth);
+        try (Connection conn = DatabaseManager.getConnection();) {
 
-            var rs = statement.executeQuery();
-            if(rs.next()) {
-                return rs.getString("username");
-            }else{
-                return null;
+            try (var statement = conn.prepareStatement("SELECT username FROM auths WHERE authToken=?");) {
+                statement.setString(1, auth);
+
+                try (var rs = statement.executeQuery();) {
+                    if (rs.next()) {
+                        return rs.getString("username");
+                    } else {
+                        return null;
+                    }
+                }
             }
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
@@ -87,16 +82,19 @@ public class DatabaseAuthDao implements AuthDAO{
 
     @Override
     public UserData checkAuth(String authToken) {
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("SELECT username FROM users WHERE authToken=?");
-            statement.setString(1, authToken);
+        try (Connection conn = DatabaseManager.getConnection();){
 
-            var rs = statement.executeQuery();
-            if(rs.next()) {
-                return new UserData(rs.getString("username"),null,null);
-            }else{
-                return null;
+            try(var statement = conn.prepareStatement("SELECT username FROM auths WHERE authToken=?");) {
+                statement.setString(1, authToken);
+
+                try(var rs = statement.executeQuery();) {
+                    if (rs.next()) {
+                        return new UserData(rs.getString("username"), null, null);
+                    } else {
+                        return new UserData(null, null, null);
+
+                    }
+                }
             }
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
@@ -105,13 +103,6 @@ public class DatabaseAuthDao implements AuthDAO{
 
     @Override
     public void clear() {
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("TRUNCATE auths");
-
-            statement.executeUpdate();
-        } catch (DataAccessException | SQLException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseManager.executeUpdate("TRUNCATE auths");
     }
 }

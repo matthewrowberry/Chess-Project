@@ -65,7 +65,7 @@ public class LoginService {
         System.out.println(auth);
         if(auths.checkAuth(auth).username()!=null) {
             auths.deleteAuth(auth);
-            return null;
+            return new AuthToken(null,null);
         }
         else{
             return new FullError(new ErrorNumber(401),new ErrorMessage("Error: unauthorized"));
