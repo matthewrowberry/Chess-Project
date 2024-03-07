@@ -8,6 +8,7 @@ import model.UserData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -53,7 +54,7 @@ public class DatabaseGameDao implements GameDAO{
 
     @Override
     public void clear() {
-        DatabaseManager.executeUpdate("TRUNCATE auths");
+        DatabaseManager.executeUpdate("TRUNCATE games");
     }
 
     @Override
@@ -78,17 +79,31 @@ public class DatabaseGameDao implements GameDAO{
 
     @Override
     public void updateGame(int id, GameData game) {
-        DatabaseManager.executeUpdate("DELETE FROM games WHERE id=?",id);
-
+        DatabaseManager.executeUpdate("DELETE FROM games WHERE gameID=?",id);
+        insertGame(id,game);
     }
 
     @Override
     public List<GameDataRedacted> getGames() {
-        return null;
-    }
+        List<GameDataRedacted> games = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection();){
 
+            try(var statement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName FROM games");) {
+
+
+                try(var rs = statement.executeQuery();) {
+                    while(rs.next()) {
+                        games.add(new GameDataRedacted(rs.getInt("gameID"),rs.getString("whiteUsername"),rs.getString("blackUsername"),rs.getString("gameName")));
+                    }
+                }
+            }
+            return games;
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Override
-    public int insertGame(GameData game) {
+    public int insertGame(GameData game){
         Random rand = new Random();
         int num;
 
@@ -97,6 +112,11 @@ public class DatabaseGameDao implements GameDAO{
 
 
         }while(getGame(num)!=null);
+        return insertGame(num,game);
+    }
+
+    public int insertGame(int num,GameData game) {
+
 
         DatabaseManager.executeUpdate("INSERT INTO games (gameID, whiteUsername, blackUsername,gameName,game) VALUES(?,?,?,?,?);",num,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game());
         return num;

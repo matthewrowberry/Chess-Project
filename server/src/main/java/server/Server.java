@@ -18,14 +18,14 @@ public class Server {
     private UserDAO users;
     private AuthDAO auths;
     private GameDAO games;
-    private DatabaseUserDao users2;
+
     Gson parser;
     public int run(int desiredPort) throws Exception {
         users = new DatabaseUserDao();
-        //users = new MemoryUserDao();
+
         auths = new DatabaseAuthDao();
 
-        games = new MemoryGameDAO();
+        games = new DatabaseGameDao();
         parser = new Gson();
         Spark.port(desiredPort);
 
