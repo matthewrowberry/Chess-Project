@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class DatabaseUserDao implements UserDAO{
-    DatabaseManager database;
+
     public DatabaseUserDao() throws DataAccessException, SQLException {
 
         configureDatabase();
@@ -74,11 +74,15 @@ public class DatabaseUserDao implements UserDAO{
     public UserData getUser(UserData userData) {
         try {
             Connection conn = DatabaseManager.getConnection();
-            var statement = conn.prepareStatement("SELECT username, password, email FROM pet WHERE username=?");
+            var statement = conn.prepareStatement("SELECT username, password, email FROM users WHERE username=?");
             statement.setString(1, userData.username());
 
             var rs = statement.executeQuery();
-            return new UserData(rs.getString("username"),rs.getString("password"),rs.getString("email"));
+            if(rs.next()) {
+                return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
+            }else{
+                return null;
+            }
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
