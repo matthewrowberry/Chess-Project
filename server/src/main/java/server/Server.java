@@ -20,8 +20,12 @@ public class Server {
     private GameDAO games;
 
     Gson parser;
-    public int run(int desiredPort) throws Exception {
-        users = new DatabaseUserDao();
+    public int run(int desiredPort) {
+        try {
+            users = new DatabaseUserDao();
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         auths = new DatabaseAuthDao();
 
