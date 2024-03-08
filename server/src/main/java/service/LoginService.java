@@ -6,6 +6,7 @@ import dataAccess.AuthDAO;
 import dataAccess.UserDAO;
 import model.AuthToken;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -14,7 +15,8 @@ public class LoginService {
     private String username, password, email;
     public LoginService(String username, String password, String email){
         this.username = username;
-        this.password = password;
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
         this.email = email;
     }
 
@@ -33,6 +35,7 @@ public class LoginService {
     }
 
     public Object register(UserDAO users, AuthDAO auths){
+
         UserData userData = new UserData(username,password,email);
         if(username==null || password==null || email==null){
             return new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request"));
