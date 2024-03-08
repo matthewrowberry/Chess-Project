@@ -59,7 +59,6 @@ public class DatabaseUserDao implements UserDAO{
     @Override
     public UserData getUser(UserData userData) {
         try (Connection conn = DatabaseManager.getConnection();){
-
             try(var statement = conn.prepareStatement("SELECT username, password, email FROM users WHERE username=?");) {
                 statement.setString(1, userData.username());
 

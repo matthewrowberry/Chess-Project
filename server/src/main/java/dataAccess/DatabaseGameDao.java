@@ -115,7 +115,7 @@ public class DatabaseGameDao implements GameDAO{
         return insertGame(num,game);
     }
 
-    public int insertGame(int num,GameData game) {
+    private int insertGame(int num,GameData game) {
 
 
         DatabaseManager.executeUpdate("INSERT INTO games (gameID, whiteUsername, blackUsername,gameName,game) VALUES(?,?,?,?,?);",num,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game());

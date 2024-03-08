@@ -7,7 +7,7 @@ public class PossibleMoves {
     ChessPiece.PieceType type;
     ChessGame.TeamColor color;
     int myRow, myCol;
-    ChessBoard board;
+    private transient ChessBoard board;
     ChessPosition position;
 
 

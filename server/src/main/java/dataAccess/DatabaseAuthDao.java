@@ -17,6 +17,9 @@ public class DatabaseAuthDao implements AuthDAO{
     }
     @Override
     public void createAuth(String username, String authToken) {
+        if(authToken==null || username==null){
+            throw new RuntimeException();
+        }
         try {
             Connection conn = DatabaseManager.getConnection();
             var statement = conn.prepareStatement("INSERT INTO auths (authToken, username) VALUES(?,?);");
