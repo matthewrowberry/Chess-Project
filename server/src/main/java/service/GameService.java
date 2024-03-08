@@ -84,7 +84,7 @@ public class GameService {
 
                 }
             } else if (Objects.equals(playerColor, "")||playerColor==null) {
-                System.out.println("hi");
+
                 return new UserData(null,null,null);
 
             } else{

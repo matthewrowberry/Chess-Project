@@ -73,7 +73,7 @@ public class LoginService {
     }
 
     public Object logout(AuthDAO auths,String auth){
-        System.out.println(auth);
+
         if(auths.checkAuth(auth).username()!=null) {
             auths.deleteAuth(auth);
             return new AuthToken(null,null);

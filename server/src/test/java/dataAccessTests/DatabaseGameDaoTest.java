@@ -68,9 +68,9 @@ class DatabaseGameDaoTest {
         } catch (InvalidMoveException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(game.toString());
+
         Gson json = new Gson();
-        System.out.println(json.toJson(game));
+
         games.updateGame(id,new GameData(id,"yolo","ugh","wut",game));
 
         assertEquals(new GameData(id,"yolo","ugh","wut",game1),games.getGame(id));
