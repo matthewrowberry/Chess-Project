@@ -6,6 +6,7 @@ import dataAccess.AuthDAO;
 import dataAccess.UserDAO;
 import model.AuthToken;
 import model.UserData;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Objects;
@@ -15,14 +16,12 @@ public class LoginService {
     private String username, password, email;
     public LoginService(String username, String password, String email){
         this.username = username;
-        if(password!=null) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            this.password = encoder.encode(password);
-        }else{
-            this.password = null;
-        }
+
+        this.password = password;
         this.email = email;
     }
+
+
 
     public LoginService(String username, String password){
         this(username,password,null);
@@ -39,7 +38,11 @@ public class LoginService {
     }
 
     public Object register(UserDAO users, AuthDAO auths){
-
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if(password != null) {
+            password = encoder.encode(password);
+        }
+        System.out.println(password);
         UserData userData = new UserData(username,password,email);
         if(username==null || password==null || email==null){
             return new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request"));
@@ -57,9 +60,10 @@ public class LoginService {
 
     public Object login(UserDAO users, AuthDAO auths){
 
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UserData userData = new UserData(username,password,null);
         userData = users.getUser(userData);
-        if(userData != null && Objects.equals(password, userData.password())){
+        if(userData != null && encoder.matches(password, userData.password())){
             return getAuth(username,auths);
 
         }

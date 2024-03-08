@@ -65,6 +65,7 @@ class loginServiceTest {
         LoginService loginService = new LoginService("username","password","this@gmail.com");
         loginService.register(users,auths);
 
+        loginService = new LoginService("username","password","this@gmail.com");
 
         Object result =  loginService.login(users,auths);
         assertInstanceOf(AuthToken.class,result);
