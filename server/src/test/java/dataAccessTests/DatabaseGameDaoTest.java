@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -109,6 +111,8 @@ class DatabaseGameDaoTest {
         ArrayList<GameDataRedacted> list = new ArrayList<>();
         list.add(new GameDataRedacted(id1,"yolo","ugh","wut"));
         list.add(new GameDataRedacted(id2,"yolo","ugh","wut"));
+        Collections.sort(list, Comparator.comparingInt(GameDataRedacted::gameID));
+
         assertEquals(games.getGames(),list);
     }
 
