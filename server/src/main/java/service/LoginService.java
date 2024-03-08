@@ -15,8 +15,12 @@ public class LoginService {
     private String username, password, email;
     public LoginService(String username, String password, String email){
         this.username = username;
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(password);
+        if(password!=null) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            this.password = encoder.encode(password);
+        }else{
+            this.password = null;
+        }
         this.email = email;
     }
 
