@@ -21,7 +21,7 @@ public class PersistenceTests {
 
 
     @BeforeAll
-    public static void init() throws Exception{
+    public static void init() {
         startServer();
         serverFacade.clear();
     }
@@ -31,7 +31,7 @@ public class PersistenceTests {
         server.stop();
     }
 
-    public static void startServer() throws Exception{
+    public static void startServer() {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
@@ -41,7 +41,7 @@ public class PersistenceTests {
 
     @Test
     @DisplayName("Persistence Test")
-    public void persistenceTest() throws Exception {
+    public void persistenceTest() throws TestException {
         var initialRowCount = getDatabaseRows();
 
         TestModels.TestRegisterRequest registerRequest = new TestModels.TestRegisterRequest();
