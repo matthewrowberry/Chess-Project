@@ -56,6 +56,8 @@ public class ChessPiece {
         }
     }
 
+
+
     /**
      * @return Which team this chess piece belongs to
      */
