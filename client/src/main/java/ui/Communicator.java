@@ -179,7 +179,16 @@ public class Communicator {
         return null;
     }
 
-    public String joinObserver(){
+    public String joinObserver( int gameID){
+
+        HttpURLConnection http = setup("http://localhost:8080/game","PUT");
+
+
+
+// Write out the body
+        var body = Map.of("gameID", gameID);
+
+        makeRequest(http, body, null, true);
 
         return null;
     }

@@ -44,5 +44,7 @@ public class Main {
         comms.listGames();
 
         comms.joinGame("WHITE",188);
+
+        comms.joinObserver(197);
     }
 }
