@@ -58,7 +58,7 @@ public class Communicator {
         var body = Map.of("username", username, "password", password,"email",email);
         AuthToken stuff = (AuthToken) makeRequest(http, body, AuthToken.class, true);
         authtoken = stuff.authToken();
-        System.out.println(authtoken);
+        System.out.println("Logged in as " + stuff.username());
         return null;
     }
 
@@ -94,7 +94,7 @@ public class Communicator {
         return null;
     }
 
-    public String login(String username, String password) throws IOException {
+    public String login(String username, String password){
 
         HttpURLConnection http = setup("http://localhost:8080/session","POST");
 
@@ -106,7 +106,7 @@ public class Communicator {
 
         AuthToken auth = (AuthToken) stuff;
         authtoken = auth.authToken();
-        System.out.println(auth.authToken());
+        System.out.println("Logged in as " + auth.username());
         return null;
     }
 
@@ -116,7 +116,7 @@ public class Communicator {
 
         Object stuff = makeRequest(http, null, null, false);
         authtoken="";
-
+        System.out.println("Logged out");
         return null;
     }
 
