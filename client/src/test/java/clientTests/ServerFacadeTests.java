@@ -107,6 +107,48 @@ public class ServerFacadeTests {
 
     }
 
+    @Test
+    public void joinObserverTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game with name of \"scooby doo\" created", comms.createGame("scooby doo"));
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null\n",comms.listGames());
+        Assertions.assertEquals("",comms.joinObserver(1));
+
+    }
+
+    @Test
+    public void joinObserverFailTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game with name of \"scooby doo\" created", comms.createGame("scooby doo"));
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null\n",comms.listGames());
+        Assertions.assertEquals("Invalid game Number",comms.joinObserver(2));
+
+    }
+
+    @Test
+    public void joinTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game with name of \"scooby doo\" created", comms.createGame("scooby doo"));
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null\n",comms.listGames());
+        Assertions.assertEquals("",comms.joinGame("WHITE",1));
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: A\n\tBlack team: null\n",comms.listGames());
+
+    }
+
+    @Test
+    public void joinFailTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game with name of \"scooby doo\" created", comms.createGame("scooby doo"));
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null\n",comms.listGames());
+        Assertions.assertEquals("Error: bad request",comms.joinGame("blue",1));
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null\n",comms.listGames());
+
+    }
+
 
 
 }

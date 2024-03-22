@@ -101,7 +101,7 @@ public class ServerFacade {
     }
 
 
-    public Object makeRequest(HttpURLConnection http, Map body, Type type, boolean parameters){
+    private Object makeRequest(HttpURLConnection http, Map body, Type type, boolean parameters){
 
         if(parameters) {
             try (var outputStream = http.getOutputStream()) {
@@ -321,9 +321,14 @@ public class ServerFacade {
 
 // Write out the body
 
-            var body = Map.of("gameID", games.get(gameID));
+        Map<String, Integer> body = null;
+        try {
+            body = Map.of("gameID", games.get(gameID));
+        } catch (Exception e) {
+            return"Invalid game Number";
+        }
 
-            Object stuff = makeRequest(http, body, null, true);
+        Object stuff = makeRequest(http, body, null, true);
         if(stuff.equals(200)) {
             printBoard(board);
             return "";
