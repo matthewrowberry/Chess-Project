@@ -5,9 +5,11 @@ import java.util.Scanner;
 public class UI {
 
     boolean loggedIn,quit;
+    Communicator comms;
     public UI() {
         loggedIn = false;
         quit = false;
+        comms = new Communicator();
 
     }
 
@@ -43,6 +45,11 @@ public class UI {
         System.out.println("login <USERNAME> <PASSWORD> - to play chess");
         System.out.println("quit - playing chess");
         System.out.println("help - with possible commands");
+    }
+
+
+    private void register(String[] args){
+        comms.register(args[1],args[2],args[3]);
     }
 
     private String[] getString(){

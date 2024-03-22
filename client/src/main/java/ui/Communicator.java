@@ -51,26 +51,13 @@ public class Communicator {
         return http;
     }
 
-    public String register(String username, String password, String email) throws IOException {
+    public String register(String username, String password, String email){
         HttpURLConnection http = setup("http://localhost:8080/user","POST");
 
 // Write out the body
         var body = Map.of("username", username, "password", password,"email",email);
-        try (var outputStream = http.getOutputStream()) {
-            var jsonBody = new Gson().toJson(body);
-            outputStream.write(jsonBody.getBytes());
-        }
-
-        // Make the request
-        http.connect();
-
-        // Output the response body
-        try (InputStream respBody = http.getInputStream()) {
-            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            System.out.println(inputStreamReader);
-            AuthToken stuff = new Gson().fromJson(inputStreamReader, AuthToken.class);
-            authtoken = stuff.authToken();
-        }
+        AuthToken stuff = (AuthToken) makeRequest(http, body, AuthToken.class, true);
+        authtoken = stuff.authToken();
         System.out.println(authtoken);
         return null;
     }
@@ -128,6 +115,7 @@ public class Communicator {
         HttpURLConnection http = setup("http://localhost:8080/session","DELETE");
 
         Object stuff = makeRequest(http, null, null, false);
+        authtoken="";
 
         return null;
     }
