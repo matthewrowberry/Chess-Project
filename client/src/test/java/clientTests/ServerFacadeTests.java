@@ -8,18 +8,21 @@ import ui.ServerFacade;
 public class ServerFacadeTests {
 
     private static Server server;
-    private ServerFacade comms;
-
+    static ServerFacade comms;
+    int porter;
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(0);
+
         System.out.println("Started test HTTP server on " + port);
+        comms = new ServerFacade(port);
     }
 
     @BeforeEach
     public void clear(){
         server.clear();
+
     }
 
     @AfterAll
@@ -30,7 +33,12 @@ public class ServerFacadeTests {
 
     @Test
     public void RegisterTest() {
-        Assertions.assertTrue(true);
+        Assertions.assertEquals(comms.register("A","new","user"),"Logged in as A");
     }
 
+    @Test
+    public void RegisterFailTest(){
+        Assertions.assertEquals(comms.register("A","new","user"),"Logged in as A");
+        Assertions.assertEquals(comms.register("A","new","user"),"Error: already taken");
+    }
 }

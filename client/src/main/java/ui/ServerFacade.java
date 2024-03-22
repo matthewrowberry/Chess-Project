@@ -116,7 +116,7 @@ public class ServerFacade {
         try {
             http.connect();
         } catch (IOException e) {
-
+            System.out.println("hi");
             System.out.println(e.toString());
         }
 
@@ -135,7 +135,7 @@ public class ServerFacade {
 
 
         }catch (Exception E){
-            System.out.println(E.toString());
+
             int respBody;
             try {
                 respBody = http.getResponseCode();

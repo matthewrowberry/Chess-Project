@@ -16,7 +16,8 @@ public class UI {
     public void run(){
         System.out.println("Welcome to 240 chess. Type Help to get started.\n");
         String[] arguments;
-
+        comms.register("me","me","me");
+        System.out.println(comms.register("me","me","me"));
         while(true){
             if(loggedIn){
                 System.out.print("[LOGGED_IN] >>> ");
