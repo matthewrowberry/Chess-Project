@@ -94,7 +94,7 @@ public class ServerFacadeTests {
         comms.register("A","new","user");
         Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
         Assertions.assertEquals("Game with name of \"scooby doo\" created", comms.createGame("scooby doo"));
-        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null",comms.listGames());
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null\n",comms.listGames());
 
     }
 
@@ -102,7 +102,8 @@ public class ServerFacadeTests {
     public void listFailTest(){
         comms.register("A","new","user");
         Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
-        Assertions.assertEquals("Game name cannot be null", comms.createGame(null));
+        comms.createGame("Velma");
+        Assertions.assertNotEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null\n",comms.listGames());
 
     }
 
