@@ -13,12 +13,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Communicator {
     String authtoken;
+    Map<Integer, Integer> games;
     public Communicator() {
-
+        games = new HashMap<>();
     }
 
     private HttpURLConnection setup(String url, String requestMethod){
@@ -130,8 +132,12 @@ public class Communicator {
         var body = Map.of("gameName", gameName);
 
         GameDataRedacted stuff = (GameDataRedacted) makeRequest(http, body, GameDataRedacted.class, true);
-
-        System.out.println(stuff);
+        if(stuff != null) {
+            System.out.println("Game with name of \"" + stuff.gameName() + "\" created");
+        }
+        else{
+            System.out.println("Failed to create game \""+gameName+"\"");
+        }
 
 
         return null;
@@ -146,8 +152,17 @@ public class Communicator {
 
 
         GameList stuff = (GameList) makeRequest(http, null, GameList.class, false);
+        GameDataRedacted game;
+        for(int i = 1; i<=stuff.games().size(); i++){
+            game = stuff.games().get(i-1);
+            games.put(i,game.gameID());
+            System.out.print(i+") ");
+            System.out.println(game.gameName());
+            System.out.println("\tWhite team: "+game.whiteUsername());
+            System.out.println("\tBlack team: "+game.blackUsername());
 
-        System.out.println(stuff);
+        }
+
         return null;
     }
 
@@ -160,7 +175,9 @@ public class Communicator {
 
 
 // Write out the body
-        var body = Map.of("playerColor",color, "gameID", gameID);
+        int game = games.get(gameID);
+
+        var body = Map.of("playerColor",color, "gameID", game);
 
         makeRequest(http, body, null, true);
 
