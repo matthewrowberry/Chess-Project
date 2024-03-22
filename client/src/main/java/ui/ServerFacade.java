@@ -169,6 +169,9 @@ public class ServerFacade {
         else if(stuff.equals(400)){
             return "Error: bad request";
         }
+        else if(stuff.equals(401)){
+            return "Error: unauthorized";
+        }
         else if(stuff.equals(403)){
             return "Error: already taken";
         }
@@ -214,7 +217,7 @@ public class ServerFacade {
             result = "Error: bad request";
         }
         else if(prestuff.equals(401)){
-            result = "Error: Unauthorized";
+            result = "Error: unauthorized";
         }
         else{
             result = "Error: description";

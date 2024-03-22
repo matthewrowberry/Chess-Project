@@ -41,4 +41,38 @@ public class ServerFacadeTests {
         Assertions.assertEquals(comms.register("A","new","user"),"Logged in as A");
         Assertions.assertEquals(comms.register("A","new","user"),"Error: already taken");
     }
+
+    @Test
+    public void LoginTest() {
+        comms.register("A","new","user");
+        Assertions.assertEquals(comms.login("A","new"),"Logged in as A");
+    }
+
+    @Test
+    public void LoginFailTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+
+    }
+
+    @Test
+    public void LogoutTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Logged out",comms.logout());
+
+    }
+
+    @Test
+    public void LogoutFailTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","new"));
+        server.clear();
+        Assertions.assertEquals("Error: unauthorized",comms.logout());
+
+    }
+
+
+
+
 }
