@@ -66,12 +66,45 @@ public class ServerFacadeTests {
     @Test
     public void LogoutFailTest(){
         comms.register("A","new","user");
-        Assertions.assertEquals("Error: unauthorized",comms.login("A","new"));
+
         server.clear();
         Assertions.assertEquals("Error: unauthorized",comms.logout());
 
     }
 
+    @Test
+    public void createTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game with name of \"scooby doo\" created", comms.createGame("scooby doo"));
+
+    }
+
+    @Test
+    public void createFailTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game name cannot be null", comms.createGame(null));
+
+    }
+
+
+    @Test
+    public void listTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game with name of \"scooby doo\" created", comms.createGame("scooby doo"));
+        Assertions.assertEquals("1) scooby doo\n\tWhite team: null\n\tBlack team: null",comms.listGames());
+
+    }
+
+    @Test
+    public void listFailTest(){
+        comms.register("A","new","user");
+        Assertions.assertEquals("Error: unauthorized",comms.login("A","notpassword"));
+        Assertions.assertEquals("Game name cannot be null", comms.createGame(null));
+
+    }
 
 
 

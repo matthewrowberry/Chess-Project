@@ -207,7 +207,13 @@ public class ServerFacade {
 
 
 // Write out the body
-        var body = Map.of("gameName", gameName);
+
+        Map<String, String> body = null;
+        try {
+            body = Map.of("gameName", gameName);
+        } catch (Exception e) {
+            return "Game name cannot be null";
+        }
         Object prestuff = makeRequest(http, body, GameDataRedacted.class, true);
         if(! (prestuff instanceof Integer)) {
             GameDataRedacted stuff = (GameDataRedacted) prestuff;
