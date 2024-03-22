@@ -38,6 +38,7 @@ public class LoginService {
     }
 
     public Object register(UserDAO users, AuthDAO auths){
+        System.out.println("Register user. Username: " + username + " Password: " + password + " email: " + email);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if(password != null) {
             password = encoder.encode(password);
@@ -59,7 +60,7 @@ public class LoginService {
     }
 
     public Object login(UserDAO users, AuthDAO auths){
-
+        System.out.println("login user. Username: " + username + " Password: " + password + " email: " + email);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UserData userData = new UserData(username,password,null);
         userData = users.getUser(userData);
@@ -73,12 +74,14 @@ public class LoginService {
     }
 
     public Object logout(AuthDAO auths,String auth){
-
+        System.out.println("logout user. Authtoken: " + auth);
         if(auths.checkAuth(auth).username()!=null) {
             auths.deleteAuth(auth);
+            System.out.println("success");
             return new AuthToken(null,null);
         }
         else{
+            System.out.println("error unauthorized");
             return new FullError(new ErrorNumber(401),new ErrorMessage("Error: unauthorized"));
         }
 
