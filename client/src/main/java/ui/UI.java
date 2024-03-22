@@ -5,11 +5,11 @@ import java.util.Scanner;
 public class UI {
 
     boolean loggedIn,quit;
-    Communicator comms;
+    ServerFacade comms;
     public UI() {
         loggedIn = false;
         quit = false;
-        comms = new Communicator();
+        comms = new ServerFacade();
 
     }
 
@@ -19,7 +19,7 @@ public class UI {
 
         while(true){
             if(loggedIn){
-                System.out.println("[LOGGED_IN] >>> ");
+                System.out.print("[LOGGED_IN] >>> ");
                 arguments = this.getString();
                 switch(arguments[0]){
                     case "create" -> createGame(arguments);
@@ -33,7 +33,7 @@ public class UI {
                 }
             }
             else{
-                System.out.println("[LOGGED_OUT] >>> ");
+                System.out.print("[LOGGED_OUT] >>> ");
                 arguments = this.getString();
                 switch (arguments[0]){
                     case "help" -> handleHelp();
@@ -72,7 +72,12 @@ public class UI {
 
     private void register(String[] args){
         if(args.length==4) {
-            comms.register(args[1], args[2], args[3]);
+            String result = comms.register(args[1], args[2], args[3]);
+            if(result.contains("Logged")){
+                loggedIn = true;
+            }
+            System.out.println(result);
+
         }
         else{
             System.out.println("Invalid number of arguments");
@@ -82,8 +87,11 @@ public class UI {
 
     private void login(String[] args){
         if(args.length==3) {
-            comms.login(args[1], args[2]);
-            loggedIn = true;
+            String result = comms.login(args[1], args[2]);
+            if(result.contains("Logged")) {
+                loggedIn = true;
+            }
+            System.out.println(result);
         }
         else{
             System.out.println("Invalid number of arguments");
@@ -93,7 +101,7 @@ public class UI {
 
     private void createGame(String[] args){
         if(args.length==2) {
-            comms.createGame(args[1]);
+            System.out.println(comms.createGame(args[1]));
         }
         else{
             System.out.println("Invalid number of arguments");
@@ -103,14 +111,28 @@ public class UI {
 
     private void listGames(){
 
-            comms.listGames();
+            System.out.println(comms.listGames());
 
 
     }
 
     private void joinGame(String[] args){
         if(args.length==3) {
-            comms.joinGame(args[2], Integer.parseInt(args[1]));
+            try {
+                System.out.println(comms.joinGame(args[2], Integer.parseInt(args[1])));
+            }
+            catch(Exception e){
+                System.out.println(e.toString());
+                System.out.println("Invalid entry, are the number and string switched?");
+            }
+        }
+        else if(args.length == 2){
+
+            try {
+                System.out.println(comms.joinGame("", Integer.parseInt(args[1])));
+            } catch (NumberFormatException e) {
+                System.out.println("Must be a number");
+            }
         }
         else{
             System.out.println("Invalid number of arguments");
@@ -120,7 +142,7 @@ public class UI {
 
     private void joinObserver(String[] args){
         if(args.length==2) {
-            comms.joinObserver(Integer.parseInt(args[1]));
+            System.out.println(comms.joinObserver(Integer.parseInt(args[1])));
         }
         else{
             System.out.println("Invalid number of arguments");
@@ -129,8 +151,11 @@ public class UI {
     }
 
     private void logout(){
-        comms.logout();
-        loggedIn = false;
+        String result = comms.logout();
+        System.out.println(result);
+        if(result.contains("Logged")) {
+            loggedIn = false;
+        }
     }
 
     private String[] getString(){

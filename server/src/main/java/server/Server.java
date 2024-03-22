@@ -103,6 +103,11 @@ public class Server {
         return returner(new UserData(null,null,null),res);
     }
 
+    public void clear(){
+        DbService dbService = new DbService();
+        dbService.clear(users,auths,games);
+    }
+
     private boolean authExists(Request req){
         return req.headers("authorization")==null || Objects.equals(req.headers("authorization"), "");
     }

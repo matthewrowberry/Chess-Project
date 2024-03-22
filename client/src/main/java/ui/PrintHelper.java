@@ -22,11 +22,7 @@ public class PrintHelper {
         shaded = true;
     }
 
-    public void test(){
-        System.out.println("hi");
-        System.out.print("\u001b[35;100m");
-        System.out.println("again");
-    }
+
 
     public void printBoard(ChessBoard board){
         printBoard(board,true);
