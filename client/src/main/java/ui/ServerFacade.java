@@ -3,9 +3,10 @@ package ui;
 import chess.ChessBoard;
 import com.google.gson.Gson;
 import dependencies.AuthToken;
-import dependencies.FullError;
 import dependencies.GameDataRedacted;
 import dependencies.GameList;
+import webSocketMessages.userCommands.GameID;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +15,14 @@ import java.lang.reflect.Type;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class ServerFacade {
     String authtoken;
     Map<Integer, Integer> games;
-
     PrintHelper printer = new PrintHelper();
 
+    WebSocket webSocket;
 
     ChessBoard board = new ChessBoard();
     String hostport;
@@ -33,6 +35,8 @@ public class ServerFacade {
         hostport = Integer.toString(port);
         games = new HashMap<>();
         board.resetBoard();
+
+
     }
 
     private HttpURLConnection setup(String url, String requestMethod){
@@ -288,6 +292,20 @@ public class ServerFacade {
 
         Object stuff = makeRequest(http, body, null, true);
         if(stuff.equals(200)){
+            try {
+                webSocket = new WebSocket();
+                GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_PLAYER);
+                Gson sender = new Gson();
+
+
+                webSocket.send(sender.toJson(command));
+
+
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             printBoard(board);
             return "";
         }
@@ -348,5 +366,13 @@ public class ServerFacade {
         }
 
 
+    }
+
+    private String getString(){
+        Scanner scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+
+
+        return line;
     }
 }

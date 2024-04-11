@@ -94,4 +94,20 @@ public class GameService {
         }
         return new FullError(new ErrorNumber(401),new ErrorMessage("Error: unauthorized"));
     }
+
+    public Object getGame(String authorization, GameDAO games, AuthDAO auths){
+        LoginService loginService = new LoginService();
+        if (loginService.checkAuth(authorization, auths)) {
+            GameData game = games.getGame(gameID);
+            if(game == null){
+                return new FullError(new ErrorNumber(400),new ErrorMessage("Error: bad request"));
+
+            }
+
+            return game.game();
+
+
+        }
+        return null;
+    }
 }

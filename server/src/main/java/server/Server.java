@@ -6,12 +6,15 @@ import Records.FullError;
 import model.UserData;
 import com.google.gson.Gson;
 import dataAccess.*;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import service.DbService;
 import service.GameService;
 import service.LoginService;
 import spark.*;
-
+import org.eclipse.jetty.websocket.api.*;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Objects;
 
 public class Server {
@@ -20,6 +23,7 @@ public class Server {
     private GameDAO games;
 
     Gson parser;
+
     public int run(int desiredPort) {
         try {
             users = new DatabaseUserDao();
@@ -39,7 +43,7 @@ public class Server {
 
 
 
-
+        Spark.webSocket("/connect", MyWebSocketHandler.class);
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
         Spark.delete("/session",this::logout);
@@ -47,10 +51,12 @@ public class Server {
         Spark.post("/game",this::createGame);
         Spark.get("/game",this::getGames);
         Spark.put("/game",this::joinGame);
+        //Spark.get("/connect",this::joinGame);
 
 
         Spark.init();
         Spark.awaitInitialization();
+
         return Spark.port();
     }
 
@@ -58,6 +64,8 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
+
 
     private Object returner(Object result, Response res){
         if(result instanceof FullError){
@@ -144,6 +152,8 @@ public class Server {
 
         GameService gameService = parser.fromJson(req.body(), GameService.class);
         Object result = gameService.joinGame(req.headers("authorization"),games,auths);
-        return returner(result,res);
+
+        return returner(result, res);
+
     }
 }

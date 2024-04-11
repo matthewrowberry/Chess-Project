@@ -4,11 +4,12 @@ import java.util.Scanner;
 
 public class UI {
 
-    boolean loggedIn,quit;
+    boolean loggedIn,quit,inGame;
     ServerFacade comms;
     public UI() {
         loggedIn = false;
         quit = false;
+        inGame = false;
         comms = new ServerFacade();
 
     }
@@ -19,17 +20,32 @@ public class UI {
 
         while(true){
             if(loggedIn){
+                if(!inGame){
+                    System.out.print("[LOGGED_IN] >>> ");
+                    arguments = this.getString();
+                    switch(arguments[0]){
+                        case "create" -> createGame(arguments);
+                        case "list" -> listGames();
+                        case "join" -> joinGame(arguments);
+                        case "observe" -> joinObserver(arguments);
+                        case "logout" -> logout();
+                        case "quit" -> quit = true;
+                        case "Help" -> handleHelp();
+                        default -> System.out.println("invalid entry");
+                    }
+                }
+                else{
                 System.out.print("[LOGGED_IN] >>> ");
                 arguments = this.getString();
                 switch(arguments[0]){
-                    case "create" -> createGame(arguments);
-                    case "list" -> listGames();
-                    case "join" -> joinGame(arguments);
-                    case "observe" -> joinObserver(arguments);
-                    case "logout" -> logout();
-                    case "quit" -> quit = true;
-                    case "help" -> handleHelp();
+                    case "Help" -> handleHelp();
+                    case "Redraw" -> listGames();
+                    case "Leave" -> joinGame(arguments);
+                    case "Make" -> joinObserver(arguments);
+                    case "Resign" -> logout();
+                    case "Highlight" -> quit = true;
                     default -> System.out.println("invalid entry");
+                }
                 }
             }
             else{
@@ -54,11 +70,16 @@ public class UI {
 
     private void handleHelp(){
         if(loggedIn){
-            System.out.println("create <NAME> - a game");
-            System.out.println("list - games");
-            System.out.println("join <ID> [WHITE|BLACK|<empty>] - a game");
-            System.out.println("observe <ID> - a game");
-            System.out.println("logout - when you are done");
+            if(inGame){
+                System.out.println("Stuff");
+            }
+            else {
+                System.out.println("create <NAME> - a game");
+                System.out.println("list - games");
+                System.out.println("join <ID> [WHITE|BLACK|<empty>] - a game");
+                System.out.println("observe <ID> - a game");
+                System.out.println("logout - when you are done");
+            }
         }
         else {
             System.out.println("register <USERNAME> <PASSWORD> <EMAIL> - to create an account");
@@ -69,7 +90,13 @@ public class UI {
         System.out.println("help - with possible commands");
     }
 
+    private void sendMessage(String[] args){
+        StringBuilder message = new StringBuilder();
+        for(int i = 1; i<args.length; i++){
+            message.append(args[i]);
+        }
 
+    }
     private void register(String[] args){
         if(args.length==4) {
             String result = comms.register(args[1], args[2], args[3]);
@@ -120,6 +147,7 @@ public class UI {
         if(args.length==3) {
             try {
                 System.out.println(comms.joinGame(args[2], Integer.parseInt(args[1])));
+                //inGame = true;
             }
             catch(Exception e){
                 System.out.println(e.toString());
@@ -130,6 +158,7 @@ public class UI {
 
             try {
                 System.out.println(comms.joinGame("", Integer.parseInt(args[1])));
+                //inGame = true;
             } catch (NumberFormatException e) {
                 System.out.println("Must be a number");
             }

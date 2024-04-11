@@ -121,4 +121,11 @@ public class DatabaseGameDao implements GameDAO{
         DatabaseManager.executeUpdate("INSERT INTO games (gameID, whiteUsername, blackUsername,gameName,game) VALUES(?,?,?,?,?);",num,game.whiteUsername(),game.blackUsername(),game.gameName(),game.game());
         return num;
     }
+
+    private ChessGame getGame(String gameID){
+
+        return null;
+    }
+
+
 }
