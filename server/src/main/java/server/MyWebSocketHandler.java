@@ -75,8 +75,16 @@ public class MyWebSocketHandler{
     private void joinPlayer(Session session, String message) {
         Gson json = new Gson();
         GameID request = json.fromJson(message, GameID.class);
-
         connections.addConnection(request.getGameID(),session);
+        Game game = new Game(games.getGame(request.getGameID()).game());
+
+        connections.notify(request.getGameID(),session,auths.getUsername(request.getAuthString())+" has joined the game");
+
+        try {
+            session.getRemote().sendString(json.toJson(game));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

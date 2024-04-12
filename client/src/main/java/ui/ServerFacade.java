@@ -7,6 +7,7 @@ import dependencies.AuthToken;
 import dependencies.GameDataRedacted;
 import dependencies.GameList;
 import webSocketMessages.userCommands.GameID;
+import webSocketMessages.userCommands.Leave;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
@@ -24,10 +25,12 @@ public class ServerFacade {
     PrintHelper printer = new PrintHelper();
 
     WebSocket webSocket;
-
+    boolean escape;
     ChessGame game;
     ChessBoard board = new ChessBoard();
     String hostport;
+
+    String COLOR;
 
     public ServerFacade() {
         this(8080);
@@ -294,6 +297,7 @@ public class ServerFacade {
 
         Object stuff = makeRequest(http, body, null, true);
         if(stuff.equals(200)){
+            COLOR = color;
             webSocket(game);
 
             printBoard(board);
@@ -371,18 +375,19 @@ public class ServerFacade {
     private void webSocket(int game){
         try {
             webSocket = new WebSocket();
-            GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_OBSERVER);
+            GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_PLAYER);
             Gson sender = new Gson();
-
+            webSocket.setColor(COLOR);
 
             webSocket.send(sender.toJson(command));
             String[] request;
-            boolean escape = true;
+            escape = true;
             while(escape){
                 System.out.print("[Gameplay] >>> ");
                 request = getString();
                 switch(request[0]){
                     case "Help" -> System.out.println("hehe");
+
                     case "Leave" -> escape = false;
                     default -> System.out.println("Invalid Entry");
 
@@ -395,6 +400,44 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void help(){
+        System.out.println("Help - get help");
+        System.out.println("Redraw - redraw the chess board");
+        System.out.println("Leave - leave the game");
+        System.out.println("move <begin> <end> - move from one spot to other spot");
+        System.out.println("resign - forfeit the game");
+        System.out.println("Highlight <location> - highlight moves you can make");
+    }
+    private void Redraw(){
+        webSocket.redraw();
+    }
+
+    private void leave(){
+        Leave command = new Leave(authtoken,UserGameCommand.CommandType.LEAVE);
+        Gson sender = new Gson();
+
+
+        try {
+            webSocket.send(sender.toJson(command));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        webSocket.end();
+    }
+
+    private void makeMove(){
+
+    }
+
+    private void resign(){
+
+    }
+
+    private void highlightMoves(){
+
     }
 }
 

@@ -1,7 +1,9 @@
 package server;
 
+import com.google.gson.Gson;
 import model.AuthToken;
 import org.eclipse.jetty.websocket.api.Session;
+import webSocketMessages.serverMessages.Message;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -39,13 +41,16 @@ public class ConnectionsManager {
         }
     }
 
-    public void notify(int Game, Session session){
+    public void notify(int Game, Session session, String message){
+        Message mail = new Message(message);
+        Gson json = new Gson();
+
         try{
             for(int i = 0; i<users.get(Game).size(); i++){
                 Session thisSession = users.get(Game).get(i);
                 if(thisSession!=session){
                     if(thisSession.isOpen()){
-                        thisSession.getRemote().sendString("hey");
+                        thisSession.getRemote().sendString(json.toJson(mail));
                     }
                     else{
                         users.get(Game).remove(i);

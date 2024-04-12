@@ -18,6 +18,8 @@ public class WebSocket extends Endpoint {
     private Gson json = new Gson();
     private PrintHelper printer = new PrintHelper();
 
+    boolean color = true;
+
     public WebSocket() throws Exception {
         messages = new ArrayList<>();
         URI uri = new URI("ws://localhost:8080/connect");
@@ -32,7 +34,7 @@ public class WebSocket extends Endpoint {
                     System.out.println("hi");
                 }else if(type.getServerMessageType()== ServerMessage.ServerMessageType.LOAD_GAME){
                     game = json.fromJson(message, Game.class).getGame();
-                    printer.printBoard(game.getBoard());
+                    printer.printBoard(game.getBoard(),color);
                 }
                 else if(type.getServerMessageType()== ServerMessage.ServerMessageType.ERROR){
 
@@ -40,24 +42,27 @@ public class WebSocket extends Endpoint {
                 else{
                     System.out.println("uh oh");
                 }
-
+                System.out.print("[Gameplay] >>> ");
             }
         });
 
     }
 
+    public void setColor(String color){
+        if(color=="WHITE"){
+            this.color = true;
+        }
+
+    }
     public void send(String msg) throws Exception {
         this.session.getBasicRemote().sendText(msg);
     }
 
 
-
-    public String getMessage(){
-        if(messages.isEmpty()){
-            return "";
-        }
-        return messages.removeLast();
+    public void redraw(){
+        printer.printBoard(game.getBoard(),this.color);
     }
+
 
     public void end(){
         try {

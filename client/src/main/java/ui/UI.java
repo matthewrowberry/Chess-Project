@@ -154,15 +154,7 @@ public class UI {
                 System.out.println("Invalid entry, are the number and string switched?");
             }
         }
-        else if(args.length == 2){
 
-            try {
-                System.out.println(comms.joinGame("", Integer.parseInt(args[1])));
-                //inGame = true;
-            } catch (NumberFormatException e) {
-                System.out.println("Must be a number");
-            }
-        }
         else{
             System.out.println("Invalid number of arguments");
         }
