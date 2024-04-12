@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dependencies.AuthToken;
 import dependencies.GameDataRedacted;
@@ -24,6 +25,7 @@ public class ServerFacade {
 
     WebSocket webSocket;
 
+    ChessGame game;
     ChessBoard board = new ChessBoard();
     String hostport;
 
@@ -292,19 +294,7 @@ public class ServerFacade {
 
         Object stuff = makeRequest(http, body, null, true);
         if(stuff.equals(200)){
-            try {
-                webSocket = new WebSocket();
-                GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_PLAYER);
-                Gson sender = new Gson();
-
-
-                webSocket.send(sender.toJson(command));
-
-
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            webSocket(game);
 
             printBoard(board);
             return "";
@@ -368,11 +358,43 @@ public class ServerFacade {
 
     }
 
-    private String getString(){
+    private String[] getString(){
         Scanner scanner = new Scanner(System.in);
         String line = scanner.nextLine();
+        String[] arguments = line.split(" ");
+
+        return arguments;
+    }
 
 
-        return line;
+
+    private void webSocket(int game){
+        try {
+            webSocket = new WebSocket();
+            GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_PLAYER);
+            Gson sender = new Gson();
+
+
+            webSocket.send(sender.toJson(command));
+            String[] request;
+            boolean escape = true;
+            while(escape){
+                System.out.print("[Gameplay] >>> ");
+                request = getString();
+                switch(request[0]){
+                    case "Help" -> System.out.println("hehe");
+                    case "Leave" -> escape = false;
+                    default -> System.out.println("Invalid Entry");
+
+                }
+
+
+
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
+
