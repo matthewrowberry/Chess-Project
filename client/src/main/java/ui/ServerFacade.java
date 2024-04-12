@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -347,7 +348,7 @@ public class ServerFacade {
 
         Object stuff = makeRequest(http, body, null, true);
         if(stuff.equals(200)) {
-            printBoard(board);
+            webSocket(this.gameID,false);
             return "";
         }
         else if(stuff.equals(400)) {
@@ -382,7 +383,7 @@ public class ServerFacade {
             webSocket = new WebSocket();
             GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_PLAYER);
             Gson sender = new Gson();
-            webSocket.setColor(COLOR);
+            if(player){webSocket.setColor(COLOR);}
 
             webSocket.send(sender.toJson(command));
             String[] request;
@@ -395,6 +396,7 @@ public class ServerFacade {
                         case "Help" -> help();
                         case "Move" -> move(request);
                         case "Redraw" -> redraw();
+                        case "Highlight" -> highlightMoves(request);
                         case "Leave" -> leave();
 
 
@@ -523,7 +525,14 @@ public class ServerFacade {
 
     }
 
-    private void highlightMoves(){
+    private void highlightMoves(String[] start){
+        ChessPosition starter = translate(start[1]);
+        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) webSocket.getValidMoves(starter);
+        ArrayList<ChessPosition> validEnds = new ArrayList<>();
+        for(ChessMove i:validMoves){
+            validEnds.add(i.getEndPosition());
+        }
+        printer.printBoard(webSocket.getBoard(),true,validEnds);
 
     }
 }

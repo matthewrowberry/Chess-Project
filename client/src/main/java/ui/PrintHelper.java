@@ -1,12 +1,11 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static chess.ChessPiece.PieceType.*;
 import static ui.EscapeSequences.*;
@@ -28,7 +27,10 @@ public class PrintHelper {
         printBoard(board,true);
     }
 
-    public void printBoard(ChessBoard board,boolean whitePerspective){
+    public void printBoard(ChessBoard board, boolean whitePerspective){
+        printBoard(board, whitePerspective, new ArrayList<ChessPosition>());
+    }
+    public void printBoard(ChessBoard board, boolean whitePerspective, Collection<ChessPosition> validMoves){
         System.out.println();
         this.board = board;
         int increment, start,start2;
@@ -86,10 +88,19 @@ public class PrintHelper {
                 }
                 else{
                     if(shaded){
-                        System.out.print(SET_BG_COLOR_BLACK);
+                        if(validMoves.contains(new ChessPosition(row,col))){
+                            System.out.print(SET_BG_COLOR_DARK_GREEN);
+                        }else {
+                            System.out.print(SET_BG_COLOR_BLACK);
+                        }
                     }
                     else{
-                        System.out.print(SET_BG_COLOR_BLUE);
+                        if(validMoves.contains(new ChessPosition(row,col))) {
+                            System.out.print(SET_BG_COLOR_GREEN);
+                        }
+                        else {
+                            System.out.print(SET_BG_COLOR_BLUE);
+                        }
                     }
                     shaded = !shaded;
                     printPiece(row,col);

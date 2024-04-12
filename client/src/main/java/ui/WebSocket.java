@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.Game;
 import webSocketMessages.serverMessages.Message;
@@ -11,6 +13,7 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class WebSocket extends Endpoint {
 
@@ -61,6 +64,10 @@ public class WebSocket extends Endpoint {
             this.color = false;
         }
 
+    }
+
+    public Collection<ChessMove> getValidMoves(ChessPosition start){
+        return game.validMoves(start);
     }
 
     public ChessBoard getBoard(){
