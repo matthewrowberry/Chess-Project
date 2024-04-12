@@ -2,12 +2,14 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.*;
+import model.UserData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import webSocketMessages.serverMessages.Game;
 import webSocketMessages.userCommands.GameID;
+import webSocketMessages.userCommands.Leave;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
@@ -48,9 +50,14 @@ public class MyWebSocketHandler{
 
     private void leave(Session session, String message) {
         Gson json = new Gson();
-        GameID request = json.fromJson(message, GameID.class);
+        System.out.println(message);
+        Leave request = json.fromJson(message, Leave.class);
+        System.out.println(request);
+
 
         connections.removeConnection(request.getGameID(),session);
+
+        connections.notify(request.getGameID(), session,auths.getUsername(request.getAuthString())+" has left.");
     }
 
     private void makeMove(Session session, String message) {

@@ -31,6 +31,7 @@ public class ServerFacade {
     String hostport;
 
     String COLOR;
+    int gameID;
 
     public ServerFacade() {
         this(8080);
@@ -289,6 +290,7 @@ public class ServerFacade {
 
         try {
             game = games.get(gameID);
+            this.gameID = game;
         } catch (Exception e) {
             return "invalid game number";
         }
@@ -300,7 +302,7 @@ public class ServerFacade {
             COLOR = color;
             webSocket(game);
 
-            printBoard(board);
+
             return "";
         }
         else if(stuff.equals(400)) {
@@ -336,6 +338,7 @@ public class ServerFacade {
         Map<String, Integer> body = null;
         try {
             body = Map.of("gameID", games.get(gameID));
+            this.gameID = games.get(gameID);
         } catch (Exception e) {
             return"Invalid game Number";
         }
@@ -372,7 +375,7 @@ public class ServerFacade {
 
 
 
-    private void webSocket(int game){
+    private void webSocket(int game, boolean player){
         try {
             webSocket = new WebSocket();
             GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_PLAYER);
@@ -385,12 +388,24 @@ public class ServerFacade {
             while(escape){
                 System.out.print("[Gameplay] >>> ");
                 request = getString();
-                switch(request[0]){
-                    case "Help" -> System.out.println("hehe");
+                if(player) {
+                    switch (request[0]) {
+                        case "Help" -> help();
+                        case "Redraw" -> redraw();
+                        case "Leave" -> leave();
 
-                    case "Leave" -> escape = false;
-                    default -> System.out.println("Invalid Entry");
+                        default -> System.out.println("Invalid Entry");
 
+                    }
+                }else{
+                    switch (request[0]) {
+                        case "Help" -> help();
+                        case "Redraw" -> redraw();
+                        case "Leave" -> leave();
+
+                        default -> System.out.println("Invalid Entry");
+
+                    }
                 }
 
 
@@ -410,12 +425,12 @@ public class ServerFacade {
         System.out.println("resign - forfeit the game");
         System.out.println("Highlight <location> - highlight moves you can make");
     }
-    private void Redraw(){
+    private void redraw(){
         webSocket.redraw();
     }
 
     private void leave(){
-        Leave command = new Leave(authtoken,UserGameCommand.CommandType.LEAVE);
+        Leave command = new Leave(authtoken,UserGameCommand.CommandType.LEAVE,gameID);
         Gson sender = new Gson();
 
 
@@ -426,6 +441,7 @@ public class ServerFacade {
         }
 
         webSocket.end();
+        escape = false;
     }
 
     private void makeMove(){

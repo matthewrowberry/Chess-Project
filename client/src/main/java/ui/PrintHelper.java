@@ -29,6 +29,7 @@ public class PrintHelper {
     }
 
     public void printBoard(ChessBoard board,boolean whitePerspective){
+        System.out.println();
         this.board = board;
         int increment, start;
         if(whitePerspective){
