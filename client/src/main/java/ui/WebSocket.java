@@ -7,6 +7,7 @@ import chess.ChessPosition;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.Game;
 import webSocketMessages.serverMessages.Message;
+import webSocketMessages.serverMessages.Oopsie;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.websocket.*;
@@ -35,7 +36,9 @@ public class WebSocket extends Endpoint {
             public void onMessage(String message) {
 
                 ServerMessage type = json.fromJson(message, ServerMessage.class);
+                System.out.println(type.getServerMessageType());
                 if(type.getServerMessageType()== ServerMessage.ServerMessageType.NOTIFICATION){
+
                     System.out.println(json.fromJson(message, Message.class).getMessage());
                 }else if(type.getServerMessageType()== ServerMessage.ServerMessageType.LOAD_GAME){
                     System.out.println(message);
@@ -45,6 +48,9 @@ public class WebSocket extends Endpoint {
                     printer.printBoard(game.getBoard(),color);
                 }
                 else if(type.getServerMessageType()== ServerMessage.ServerMessageType.ERROR){
+                    Oopsie err = json.fromJson(message, Oopsie.class);
+                    System.out.println("");
+                    System.out.println(err.getMessage());
 
                 }
                 else{
@@ -77,6 +83,9 @@ public class WebSocket extends Endpoint {
         this.session.getBasicRemote().sendText(msg);
     }
 
+    public void resign(){
+        game.gameOver();
+    }
 
     public void redraw(){
         printer.printBoard(game.getBoard(),this.color);

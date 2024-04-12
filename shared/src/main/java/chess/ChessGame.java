@@ -17,15 +17,19 @@ public class ChessGame {
      */
     private boolean blackTurn;
     private ChessBoard board;
-
+    public boolean gameOver;
     /**
      * Constructor, no arguments required, does nothing.
      */
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
+        gameOver = false;
     }
 
+    public void gameOver(){
+        gameOver = true;
+    }
     /**
      * @return Which team's turn it is
      */
@@ -107,7 +111,8 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         System.out.println("In makeMove");
         System.out.println(getPiece(move.getStartPosition()).getTeamColor() + " - " + getTeamTurn());
-        if(validMoves(move.getStartPosition()).contains(move) && getPiece(move.getStartPosition()).getTeamColor()==getTeamTurn()) {
+        System.out.println(!gameOver);
+        if(validMoves(move.getStartPosition()).contains(move) && getPiece(move.getStartPosition()).getTeamColor()==getTeamTurn() && !gameOver) {
             System.out.println("Should move");
             board.makeMove(move);
             blackTurn = !blackTurn;

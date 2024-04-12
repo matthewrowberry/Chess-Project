@@ -11,12 +11,10 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import webSocketMessages.serverMessages.Game;
+import webSocketMessages.serverMessages.Message;
 import webSocketMessages.serverMessages.Oopsie;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.GameID;
-import webSocketMessages.userCommands.Leave;
-import webSocketMessages.userCommands.Move;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -52,6 +50,21 @@ public class MyWebSocketHandler{
     }
 
     private void resign(Session session, String message) {
+        Gson json = new Gson();
+        Resign resign = json.fromJson(message, Resign.class);
+        GameData gameData = games.getGame(resign.getGameID());
+        ChessGame game = gameData.game();
+        game.gameOver();
+        games.insertGame(new GameData(gameData.gameID(),gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
+        try {
+            session.getRemote().sendString(json.toJson(new Message("You resigned")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String username = auths.getUsername(resign.getAuthString());
+
+        connections.update(resign.getGameID(), session,json.toJson(new Game(game)));
+        connections.notify(resign.getGameID(),session,username +" has resigned.");
     }
 
     private void leave(Session session, String message) {
@@ -67,15 +80,17 @@ public class MyWebSocketHandler{
     }
 
     private void makeMove(Session session, String message) {
-        System.out.println("Started");
+
         boolean err = false;
         Gson json = new Gson();
         Move move = json.fromJson(message, Move.class);
-        System.out.println(move.getMove().toString());
+
         String username = auths.getUsername(move.getAuthString());
         GameData gameData = games.getGame(move.getGameID());
         ChessGame game = gameData.game();
+        String color;
         if(game.getTeamTurn()== ChessGame.TeamColor.WHITE){
+            color = "White";
             System.out.println("white");
             System.out.println(gameData.whiteUsername() + " - " + username);
             System.out.println(gameData.whiteUsername().trim().equals(username.trim()));
@@ -96,7 +111,18 @@ public class MyWebSocketHandler{
                     err = true;
                 }
             }
+            else {
+                err = true;
+                Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR,"Unfortunately, it's not your turn.");
+
+                try {
+                    session.getRemote().sendString(json.toJson(error));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
         }else{
+            color = "Black";
             if(gameData.blackUsername().equals(username)){
                 try {
                     game.makeMove(move.getMove());
@@ -111,6 +137,16 @@ public class MyWebSocketHandler{
                     err = true;
                 }
             }
+            else{
+                err = true;
+                Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR,"My liege, it's not your turn");
+
+                try {
+                    session.getRemote().sendString(json.toJson(error));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
         }
         if(!err) {
             System.out.println(game.getBoard().toString());
@@ -120,12 +156,15 @@ public class MyWebSocketHandler{
             try {
                 session.getRemote().sendString(json.toJson(sendIt));
                 connections.update(gameData.gameID(), session,json.toJson(sendIt));
+                connections.notify(gameData.gameID(), session,json.toJson(new Message(color + move.getMove().toString())));
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
             System.out.println("Finished");
         }
     }
+
+
 
     private void joinObserver(Session session, String message) {
         Gson json = new Gson();

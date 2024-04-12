@@ -5,10 +5,7 @@ import com.google.gson.Gson;
 import dependencies.AuthToken;
 import dependencies.GameDataRedacted;
 import dependencies.GameList;
-import webSocketMessages.userCommands.GameID;
-import webSocketMessages.userCommands.Leave;
-import webSocketMessages.userCommands.Move;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -398,6 +395,7 @@ public class ServerFacade {
                         case "Redraw" -> redraw();
                         case "Highlight" -> highlightMoves(request);
                         case "Leave" -> leave();
+                        case "resign" -> resign();
 
 
                         default -> System.out.println("Invalid Entry");
@@ -427,11 +425,11 @@ public class ServerFacade {
     private void move(String[] move){
         ChessPosition start = translate(move[1]);
         ChessPosition end = translate(move[2]);
-        System.out.println(start.getColumn()+" " +start.getRow());
+
 
         ChessPiece.PieceType type = null;
         ChessMove chessMove;
-        System.out.println("hi");
+
 
         try {
             if(webSocket.getBoard().getPiece(start).getPieceType()== ChessPiece.PieceType.PAWN && (end.getRow() == 8 || end.getRow()==1)){
@@ -455,10 +453,10 @@ public class ServerFacade {
 
             }
         } catch (Exception e) {
-            System.out.println("hi2");
+
             throw new RuntimeException(e);
         }
-        System.out.println("huh");
+
         Gson json = new Gson();
         try {
             webSocket.send(json.toJson(new Move(UserGameCommand.CommandType.MAKE_MOVE,authtoken,chessMove,gameID)));
@@ -510,7 +508,7 @@ public class ServerFacade {
         try {
             webSocket.send(sender.toJson(command));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("The Websocket connection has expired, or the server has gone offline");
         }
 
         webSocket.end();
@@ -522,7 +520,14 @@ public class ServerFacade {
     }
 
     private void resign(){
-
+        Resign resign = new Resign(authtoken,gameID);
+        Gson json = new Gson();
+        try {
+            webSocket.send(json.toJson(resign));
+            webSocket.resign();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void highlightMoves(String[] start){
@@ -532,7 +537,7 @@ public class ServerFacade {
         for(ChessMove i:validMoves){
             validEnds.add(i.getEndPosition());
         }
-        printer.printBoard(webSocket.getBoard(),true,validEnds);
+        printer.printBoard(webSocket.getBoard(), webSocket.color,validEnds);
 
     }
 }
