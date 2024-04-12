@@ -22,7 +22,7 @@ public class ChessGame {
      * Constructor, no arguments required, does nothing.
      */
     public ChessGame() {
-
+        board = new ChessBoard();
     }
 
     /**
@@ -284,6 +284,10 @@ public class ChessGame {
                 this.board.addPiece(getPos(row,col),board.getPiece(getPos(row,col)));
             }
         }
+    }
+
+    public void resetBoard(){
+        board.resetBoard();
     }
 
     public ChessBoard setNewBoard(ChessBoard oldBoard) {

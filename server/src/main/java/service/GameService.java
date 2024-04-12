@@ -35,6 +35,7 @@ public class GameService {
         if(loginService.checkAuth(authorization,auths)) {
 
             ChessGame game = new ChessGame();
+            game.resetBoard();
             GameData insert = new GameData(0, null, null, gameName, game);
 
             return new GameID(games.insertGame(insert));

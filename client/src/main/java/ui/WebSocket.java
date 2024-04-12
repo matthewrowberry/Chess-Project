@@ -1,6 +1,8 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import webSocketMessages.serverMessages.Game;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.websocket.*;
@@ -12,8 +14,9 @@ public class WebSocket extends Endpoint {
 
     private Session session;
     private ArrayList<String> messages;
-
+    private ChessGame game;
     private Gson json = new Gson();
+    private PrintHelper printer = new PrintHelper();
 
     public WebSocket() throws Exception {
         messages = new ArrayList<>();
@@ -23,14 +26,19 @@ public class WebSocket extends Endpoint {
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
+                System.out.println(message);
                 ServerMessage type = json.fromJson(message, ServerMessage.class);
                 if(type.getServerMessageType()== ServerMessage.ServerMessageType.NOTIFICATION){
                     System.out.println("hi");
                 }else if(type.getServerMessageType()== ServerMessage.ServerMessageType.LOAD_GAME){
-
+                    game = json.fromJson(message, Game.class).getGame();
+                    printer.printBoard(game.getBoard());
                 }
                 else if(type.getServerMessageType()== ServerMessage.ServerMessageType.ERROR){
 
+                }
+                else{
+                    System.out.println("uh oh");
                 }
 
             }

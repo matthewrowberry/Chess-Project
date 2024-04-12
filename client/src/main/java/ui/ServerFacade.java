@@ -371,7 +371,7 @@ public class ServerFacade {
     private void webSocket(int game){
         try {
             webSocket = new WebSocket();
-            GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_PLAYER);
+            GameID command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_OBSERVER);
             Gson sender = new Gson();
 
 

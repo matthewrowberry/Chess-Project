@@ -32,6 +32,7 @@ public class MyWebSocketHandler{
     public void onMessage(Session session, String message) throws Exception {
         Gson basic = new Gson();
         UserGameCommand.CommandType command = basic.fromJson(message, UserGameCommand.class).getCommandType();
+        System.out.println(command);
         switch(command){
             case JOIN_PLAYER -> joinPlayer(session,message);
             case JOIN_OBSERVER -> joinObserver(session,message);
@@ -39,7 +40,7 @@ public class MyWebSocketHandler{
             case LEAVE -> leave(session,message);
             case RESIGN -> resign(session,message);
         }
-        session.getRemote().sendString("WebSocket response: " + message);
+        //session.getRemote().sendString("WebSocket response: " + message);
     }
 
     private void resign(Session session, String message) {
