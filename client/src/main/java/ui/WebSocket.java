@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.Game;
@@ -34,6 +35,8 @@ public class WebSocket extends Endpoint {
                 if(type.getServerMessageType()== ServerMessage.ServerMessageType.NOTIFICATION){
                     System.out.println(json.fromJson(message, Message.class).getMessage());
                 }else if(type.getServerMessageType()== ServerMessage.ServerMessageType.LOAD_GAME){
+                    System.out.println(message);
+                    System.out.println(json.fromJson(message, Game.class));
                     game = json.fromJson(message, Game.class).getGame();
 
                     printer.printBoard(game.getBoard(),color);
@@ -51,10 +54,17 @@ public class WebSocket extends Endpoint {
     }
 
     public void setColor(String color){
-        if(color=="WHITE"){
+        if(color.equals("WHITE")){
             this.color = true;
         }
+        else{
+            this.color = false;
+        }
 
+    }
+
+    public ChessBoard getBoard(){
+        return game.getBoard();
     }
     public void send(String msg) throws Exception {
         this.session.getBasicRemote().sendText(msg);

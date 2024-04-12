@@ -62,4 +62,25 @@ public class ConnectionsManager {
             System.out.println(e.toString());
         }
     }
+
+    public void update(int Game, Session session, String message){
+
+
+        try{
+            for(int i = 0; i<users.get(Game).size(); i++){
+                Session thisSession = users.get(Game).get(i);
+                if(thisSession!=session){
+                    if(thisSession.isOpen()){
+                        thisSession.getRemote().sendString(message);
+                    }
+                    else{
+                        users.get(Game).remove(i);
+                        i--;
+                    }
+                }
+            }
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
 }

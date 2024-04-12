@@ -31,18 +31,20 @@ public class PrintHelper {
     public void printBoard(ChessBoard board,boolean whitePerspective){
         System.out.println();
         this.board = board;
-        int increment, start;
-        if(whitePerspective){
+        int increment, start,start2;
+        if(!whitePerspective){
             increment = 1;
             start = 0;
+            start2 = 9;
         }else{
             increment = -1;
             start = 9;
+            start2 = 0;
         }
         System.out.print(SET_TEXT_COLOR_WHITE);
         for(int row = start; row<10&&row>=0; row+=increment){
 
-            for(int col = start; col<10&&col>=0; col+=increment){
+            for(int col = start2; col<10&&col>=0; col-=increment){
                 if(col == 0 || col == 9 || row == 0 ||row==9){
                     System.out.print(SET_BG_COLOR_BLACK);
                     if((col == 0||col == 9) && (row == 0 || row == 9)){
@@ -112,7 +114,7 @@ public class PrintHelper {
     }
 
     private String printSpecial(ChessPiece piece){
-        if(piece.getTeamColor()== ChessGame.TeamColor.WHITE) {
+        if(piece.getTeamColor()== ChessGame.TeamColor.BLACK) {
             return switch (piece.getPieceType()) {
                 case KING -> WHITE_KING;
                 case BISHOP -> WHITE_BISHOP;

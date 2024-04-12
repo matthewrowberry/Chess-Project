@@ -1,13 +1,13 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
+import chess.*;
 import com.google.gson.Gson;
 import dependencies.AuthToken;
 import dependencies.GameDataRedacted;
 import dependencies.GameList;
 import webSocketMessages.userCommands.GameID;
 import webSocketMessages.userCommands.Leave;
+import webSocketMessages.userCommands.Move;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
@@ -300,7 +300,9 @@ public class ServerFacade {
         Object stuff = makeRequest(http, body, null, true);
         if(stuff.equals(200)){
             COLOR = color;
-            webSocket(game);
+
+            webSocket(game,true);
+            webSocket.setColor(COLOR);
 
 
             return "";
@@ -391,8 +393,10 @@ public class ServerFacade {
                 if(player) {
                     switch (request[0]) {
                         case "Help" -> help();
+                        case "Move" -> move(request);
                         case "Redraw" -> redraw();
                         case "Leave" -> leave();
+
 
                         default -> System.out.println("Invalid Entry");
 
@@ -402,6 +406,7 @@ public class ServerFacade {
                         case "Help" -> help();
                         case "Redraw" -> redraw();
                         case "Leave" -> leave();
+
 
                         default -> System.out.println("Invalid Entry");
 
@@ -414,6 +419,72 @@ public class ServerFacade {
 
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void move(String[] move){
+        ChessPosition start = translate(move[1]);
+        ChessPosition end = translate(move[2]);
+        System.out.println(start.getColumn()+" " +start.getRow());
+
+        ChessPiece.PieceType type = null;
+        ChessMove chessMove;
+        System.out.println("hi");
+
+        try {
+            if(webSocket.getBoard().getPiece(start).getPieceType()== ChessPiece.PieceType.PAWN && (end.getRow() == 8 || end.getRow()==1)){
+                System.out.print("Please select promotion - PAWN, ROOK, BISHOP, KNIGHT, QUEEN \n>>");
+                String[] promotion = getString();
+                while(type == null) {
+                    switch (promotion[0]) {
+                        case "PAWN" -> type = ChessPiece.PieceType.PAWN;
+                        case "ROOK" -> type = ChessPiece.PieceType.ROOK;
+                        case "BISHOP" -> type = ChessPiece.PieceType.BISHOP;
+                        case "KNIGHT" -> type = ChessPiece.PieceType.KNIGHT;
+                        case "QUEEN" -> type = ChessPiece.PieceType.QUEEN;
+                        default -> type = null;
+                    }
+                }
+
+                chessMove = new ChessMove(start,end,type);
+            }
+            else {
+                chessMove = new ChessMove(start,end);
+
+            }
+        } catch (Exception e) {
+            System.out.println("hi2");
+            throw new RuntimeException(e);
+        }
+        System.out.println("huh");
+        Gson json = new Gson();
+        try {
+            webSocket.send(json.toJson(new Move(UserGameCommand.CommandType.MAKE_MOVE,authtoken,chessMove,gameID)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private ChessPosition translate(String format){
+        int col = 0;
+        switch(format.charAt(0)){
+            case 'A' -> col = 1;
+            case 'B' -> col = 2;
+            case 'C' -> col = 3;
+            case 'D' -> col = 4;
+            case 'E' -> col = 5;
+            case 'F' -> col = 6;
+            case 'G' -> col = 7;
+            case 'H' -> col = 8;
+
+        }
+
+        if(col == 0){
+            return null;
+        }
+        else{
+            return new ChessPosition(Integer.parseInt(format.substring(1)),col);
         }
     }
 

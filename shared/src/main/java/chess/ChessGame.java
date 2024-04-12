@@ -105,13 +105,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        System.out.println("In makeMove");
+        System.out.println(getPiece(move.getStartPosition()).getTeamColor() + " - " + getTeamTurn());
         if(validMoves(move.getStartPosition()).contains(move) && getPiece(move.getStartPosition()).getTeamColor()==getTeamTurn()) {
+            System.out.println("Should move");
             board.makeMove(move);
             blackTurn = !blackTurn;
         }
         else {
             throw new InvalidMoveException();
         }
+        System.out.println("Done");
     }
 
 
