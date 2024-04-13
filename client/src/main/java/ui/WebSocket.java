@@ -69,6 +69,11 @@ public class WebSocket extends Endpoint {
 
     }
 
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+
+    }
+
     public void setColor(String color){
         if(color.equals("WHITE")){
             this.color = true;
@@ -108,6 +113,5 @@ public class WebSocket extends Endpoint {
 
     }
 
-    public void onOpen(Session session, EndpointConfig endpointConfig) {
-    }
+
 }

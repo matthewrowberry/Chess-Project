@@ -90,13 +90,7 @@ public class UI {
         System.out.println("help - with possible commands");
     }
 
-    private void sendMessage(String[] args){
-        StringBuilder message = new StringBuilder();
-        for(int i = 1; i<args.length; i++){
-            message.append(args[i]);
-        }
 
-    }
     private void register(String[] args){
         if(args.length==4) {
             String result = comms.register(args[1], args[2], args[3]);

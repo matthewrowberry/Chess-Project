@@ -24,24 +24,16 @@ public class ServerFacade {
     ChessGame game;
     ChessBoard board = new ChessBoard();
     String hostport;
-
     String color;
     int gameID;
-
     public ServerFacade() {
         this(8080);
     }
-
     public ServerFacade(int port){
         hostport = Integer.toString(port);
         games = new HashMap<>();
         board.resetBoard();
-
-
     }
-
-
-
     private HttpURLConnection setup(String url, String requestMethod){
         URI uri = null;
         try {
@@ -243,13 +235,7 @@ public class ServerFacade {
     public String listGames(){
         String result = "";
         HttpURLConnection http = setup("game","GET");
-
-
-
-// Write out the body
-
         Object prestuff = makeRequest(http, null, GameList.class, false);
-
         if(! (prestuff instanceof Integer)) {
             GameList stuff = (GameList) prestuff;
             GameDataRedacted game;
@@ -260,7 +246,6 @@ public class ServerFacade {
                 result += game.gameName()+"\n";
                 result += "\tWhite team: " + game.whiteUsername()+"\n";
                 result += "\tBlack team: " + game.blackUsername()+"\n";
-
             }
         }
         else if(prestuff.equals(401)){
@@ -274,17 +259,8 @@ public class ServerFacade {
     }
 
     public String joinGame(String color, int gameID){
-
-
-        //"playerColor":"WHITE/BLACK", "gameID": 1234
         HttpURLConnection http = setup("game","PUT");
-
-
-
-// Write out the body
-
         int game;
-
         try {
             game = games.get(gameID);
             this.gameID = game;
@@ -300,6 +276,7 @@ public class ServerFacade {
 
             webSocket(game,true);
             webSocket.setColor(this.color);
+            webSocket.onOpen(null,null);
 
 
             return "";
@@ -371,9 +348,6 @@ public class ServerFacade {
 
         return arguments;
     }
-
-
-
     private void webSocket(int game, boolean player){
         try {
             webSocket = new WebSocket();
@@ -389,7 +363,6 @@ public class ServerFacade {
             else{
                 command = new GameID(authtoken,game, UserGameCommand.CommandType.JOIN_OBSERVER,null);
             }
-
             webSocket.send(sender.toJson(command));
             String[] request;
             escape = true;
@@ -404,42 +377,27 @@ public class ServerFacade {
                         case "Highlight" -> highlightMoves(request);
                         case "Leave" -> leave();
                         case "resign" -> resign();
-
-
                         default -> System.out.println("Invalid Entry");
-
                     }
                 }else{
                     switch (request[0]) {
                         case "Help" -> help();
                         case "Redraw" -> redraw();
                         case "Leave" -> leave();
-
-
                         default -> System.out.println("Invalid Entry");
-
                     }
                 }
-
-
-
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
     private void move(String[] move) {
         if (move.length == 3) {
             ChessPosition start = translate(move[1]);
             ChessPosition end = translate(move[2]);
-
-
             ChessPiece.PieceType type = null;
             ChessMove chessMove;
-
-
             try {
                 if (webSocket.getBoard().getPiece(start).getPieceType() != null && webSocket.getBoard().getPiece(start).getPieceType() == ChessPiece.PieceType.PAWN && (end.getRow() == 8 || end.getRow() == 1)) {
                     System.out.print("Please select promotion - PAWN, ROOK, BISHOP, KNIGHT, QUEEN \n>>");
@@ -454,29 +412,23 @@ public class ServerFacade {
                             default -> type = null;
                         }
                     }
-
                     chessMove = new ChessMove(start, end, type);
                 } else {
                     chessMove = new ChessMove(start, end);
-
                 }
             } catch (Exception e) {
-
                 throw new RuntimeException(e);
             }
-
             Gson json = new Gson();
             try {
                 webSocket.send(json.toJson(new Move(UserGameCommand.CommandType.MAKE_MOVE, authtoken, chessMove, gameID)));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-
         }else{
             System.out.println("Invalid number of arguments");
         }
     }
-
     private ChessPosition translate(String format){
         int col = 0;
         switch(format.charAt(0)){
@@ -488,9 +440,7 @@ public class ServerFacade {
             case 'F' -> col = 6;
             case 'G' -> col = 7;
             case 'H' -> col = 8;
-
         }
-
         if(col == 0){
             return null;
         }
@@ -498,7 +448,6 @@ public class ServerFacade {
             return new ChessPosition(Integer.parseInt(format.substring(1)),col);
         }
     }
-
     private void help(){
         System.out.println("Help - get help");
         System.out.println("Redraw - redraw the chess board");
@@ -510,26 +459,17 @@ public class ServerFacade {
     private void redraw(){
         webSocket.redraw();
     }
-
     private void leave(){
         Leave command = new Leave(authtoken,UserGameCommand.CommandType.LEAVE,gameID);
         Gson sender = new Gson();
-
-
         try {
             webSocket.send(sender.toJson(command));
         } catch (Exception e) {
             System.out.println("The Websocket connection has expired, or the server has gone offline");
         }
-
         webSocket.end();
         escape = false;
     }
-
-    private void makeMove(){
-
-    }
-
     private void resign(){
         Resign resign = new Resign(authtoken,gameID);
         Gson json = new Gson();
@@ -540,7 +480,6 @@ public class ServerFacade {
             throw new RuntimeException(e);
         }
     }
-
     private void highlightMoves(String[] start){
         ChessPosition starter = translate(start[1]);
         ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) webSocket.getValidMoves(starter);
@@ -551,7 +490,5 @@ public class ServerFacade {
             }
         }
         printer.printBoard(webSocket.getBoard(), webSocket.color,validEnds);
-
     }
 }
-

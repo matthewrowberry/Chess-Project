@@ -216,8 +216,9 @@ public class MyWebSocketHandler{
             }
         }else{
             try {
-                session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "Invalid GameID")));
+                session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "That is an Invalid GameID")));
             } catch (IOException e) {
+                System.out.println(e.toString());
                 throw new RuntimeException(e);
             }
         }
