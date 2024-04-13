@@ -14,11 +14,11 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "ChessMove{" +
-                "start=" + start +
-                ", end=" + end +
-                ", promotion=" + promotion +
-                '}';
+        return " moved " + getCharForNumber(start.getColumn()) + start.getRow() + " to " +getCharForNumber(end.getColumn()) + end.getRow();
+    }
+
+    private String getCharForNumber(int i) {
+        return i > 0 && i < 27 ? String.valueOf((char)(i + 64)) : null;
     }
 
     private ChessPiece.PieceType promotion;

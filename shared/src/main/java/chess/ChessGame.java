@@ -75,7 +75,7 @@ public class ChessGame {
 
     //throw new RuntimeException("Not implemented");
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if(getPiece(board,startPosition.getRow(),startPosition.getColumn())==null){
+        if(getPiece(board,startPosition.getRow(),startPosition.getColumn())==null || gameOver){
             return null;
         }
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
@@ -109,10 +109,11 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+
         System.out.println("In makeMove");
         System.out.println(getPiece(move.getStartPosition()).getTeamColor() + " - " + getTeamTurn());
         System.out.println(!gameOver);
-        if(validMoves(move.getStartPosition()).contains(move) && getPiece(move.getStartPosition()).getTeamColor()==getTeamTurn() && !gameOver) {
+        if(validMoves(move.getStartPosition()) != null && validMoves(move.getStartPosition()).contains(move) && getPiece(move.getStartPosition()).getTeamColor()==getTeamTurn() && !gameOver) {
             System.out.println("Should move");
             board.makeMove(move);
             blackTurn = !blackTurn;

@@ -36,21 +36,28 @@ public class WebSocket extends Endpoint {
             public void onMessage(String message) {
 
                 ServerMessage type = json.fromJson(message, ServerMessage.class);
-                System.out.println(type.getServerMessageType());
+
                 if(type.getServerMessageType()== ServerMessage.ServerMessageType.NOTIFICATION){
 
                     System.out.println(json.fromJson(message, Message.class).getMessage());
                 }else if(type.getServerMessageType()== ServerMessage.ServerMessageType.LOAD_GAME){
-                    System.out.println(message);
-                    System.out.println(json.fromJson(message, Game.class));
+
+
                     game = json.fromJson(message, Game.class).getGame();
 
+
                     printer.printBoard(game.getBoard(),color);
+                    if(game.isInStalemate(ChessGame.TeamColor.WHITE)){
+                        System.out.println("White is in stalemate, the game is over");
+                    }
+                    else if(game.isInStalemate(ChessGame.TeamColor.BLACK)){
+                        System.out.println("Black is in stalemate, the game is over");
+                    }
                 }
                 else if(type.getServerMessageType()== ServerMessage.ServerMessageType.ERROR){
                     Oopsie err = json.fromJson(message, Oopsie.class);
-                    System.out.println("");
-                    System.out.println(err.getMessage());
+                    System.out.println();
+                    System.out.println(err.getErrorMessage());
 
                 }
                 else{

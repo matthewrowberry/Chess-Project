@@ -50,21 +50,40 @@ public class MyWebSocketHandler{
     }
 
     private void resign(Session session, String message) {
+
         Gson json = new Gson();
         Resign resign = json.fromJson(message, Resign.class);
-        GameData gameData = games.getGame(resign.getGameID());
-        ChessGame game = gameData.game();
-        game.gameOver();
-        games.insertGame(new GameData(gameData.gameID(),gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
-        try {
-            session.getRemote().sendString(json.toJson(new Message("You resigned")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String username = auths.getUsername(resign.getAuthString());
 
-        connections.update(resign.getGameID(), session,json.toJson(new Game(game)));
-        connections.notify(resign.getGameID(),session,username +" has resigned.");
+        GameData gameData = games.getGame(resign.getGameID());
+        if(!gameData.game().gameOver) {
+            if (auths.getUsername(resign.getAuthString()).equals(gameData.whiteUsername()) || auths.getUsername(resign.getAuthString()).equals(gameData.blackUsername())) {
+                ChessGame game = gameData.game();
+                game.gameOver();
+                System.out.println(game.gameOver);
+                games.updateGame(gameData.gameID(), new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
+                try {
+                    session.getRemote().sendString(json.toJson(new Message("You resigned")));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String username = auths.getUsername(resign.getAuthString());
+
+                //connections.update(resign.getGameID(), session,json.toJson(new Game(game)));
+                connections.notify(resign.getGameID(), session, username + " has resigned.");
+            } else {
+                try {
+                    session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "Observer can't resign")));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }else{
+            try {
+                session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "Game Has already been resigned")));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void leave(Session session, String message) {
@@ -84,67 +103,75 @@ public class MyWebSocketHandler{
         boolean err = false;
         Gson json = new Gson();
         Move move = json.fromJson(message, Move.class);
-
+        String color = null;
         String username = auths.getUsername(move.getAuthString());
         GameData gameData = games.getGame(move.getGameID());
         ChessGame game = gameData.game();
-        String color;
-        if(game.getTeamTurn()== ChessGame.TeamColor.WHITE){
-            color = "White";
-            System.out.println("white");
-            System.out.println(gameData.whiteUsername() + " - " + username);
-            System.out.println(gameData.whiteUsername().trim().equals(username.trim()));
-            if(gameData.whiteUsername().equals(username)){
-                try {
-                    System.out.println("time to move");
-                    System.out.println(game.getTeamTurn());
-                    game.makeMove(move.getMove());
-                } catch (InvalidMoveException e) {
-                    System.out.println("invalid");
-                    Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR,"That's an invalid move");
+        if(game.gameOver){
+            Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR,"No move allowed; The Game is over.");
+            err = true;
+            try {
+                session.getRemote().sendString(json.toJson(error));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }else {
+
+            if (game.getTeamTurn() == ChessGame.TeamColor.WHITE) {
+                color = "White";
+                System.out.println("white");
+                System.out.println(gameData.whiteUsername() + " - " + username);
+                System.out.println(gameData.whiteUsername().trim().equals(username.trim()));
+                if (gameData.whiteUsername().equals(username)) {
+                    try {
+                        System.out.println("time to move");
+                        System.out.println(game.getTeamTurn());
+                        game.makeMove(move.getMove());
+                    } catch (InvalidMoveException e) {
+                        System.out.println("invalid");
+                        Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR, "That's an invalid move");
+
+                        try {
+                            session.getRemote().sendString(json.toJson(error));
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        err = true;
+                    }
+                } else {
+                    err = true;
+                    Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR, "Unfortunately, it's not your turn.");
 
                     try {
                         session.getRemote().sendString(json.toJson(error));
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    err = true;
                 }
-            }
-            else {
-                err = true;
-                Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR,"Unfortunately, it's not your turn.");
+            } else {
+                color = "Black";
+                if (gameData.blackUsername().equals(username)) {
+                    try {
+                        game.makeMove(move.getMove());
+                    } catch (InvalidMoveException e) {
+                        Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR, "That's an invalid move");
+                        try {
+                            session.getRemote().sendString(json.toJson(error));
 
-                try {
-                    session.getRemote().sendString(json.toJson(error));
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        }else{
-            color = "Black";
-            if(gameData.blackUsername().equals(username)){
-                try {
-                    game.makeMove(move.getMove());
-                } catch (InvalidMoveException e) {
-                    Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR,"That's an invalid move");
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        err = true;
+                    }
+                } else {
+                    err = true;
+                    Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR, "My liege, it's not your turn");
+
                     try {
                         session.getRemote().sendString(json.toJson(error));
-
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    err = true;
-                }
-            }
-            else{
-                err = true;
-                Oopsie error = new Oopsie(ServerMessage.ServerMessageType.ERROR,"My liege, it's not your turn");
-
-                try {
-                    session.getRemote().sendString(json.toJson(error));
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
                 }
             }
         }
@@ -156,7 +183,7 @@ public class MyWebSocketHandler{
             try {
                 session.getRemote().sendString(json.toJson(sendIt));
                 connections.update(gameData.gameID(), session,json.toJson(sendIt));
-                connections.notify(gameData.gameID(), session,json.toJson(new Message(color + move.getMove().toString())));
+                connections.notify(gameData.gameID(), session,color + move.getMove().toString());
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
@@ -170,15 +197,30 @@ public class MyWebSocketHandler{
         Gson json = new Gson();
         GameID request = json.fromJson(message, GameID.class);
         connections.addConnection(request.getGameID(),session);
-        Game game = new Game(games.getGame(request.getGameID()).game());
+        if(games.getGame(request.getGameID())!=null) {
+            if(auths.getUsername(request.getAuthString())!=null) {
+                Game game = new Game(games.getGame(request.getGameID()).game());
+                connections.notify(request.getGameID(), session, auths.getUsername(request.getAuthString()) + " has joined the game as an Observer");
 
-        try {
-            session.getRemote().sendString(json.toJson(game));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                try {
+                    session.getRemote().sendString(json.toJson(game));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }else{
+                try {
+                    session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "Invalid AuthToken")));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }else{
+            try {
+                session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "Invalid GameID")));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-
-
 
     }
 
@@ -186,15 +228,57 @@ public class MyWebSocketHandler{
         Gson json = new Gson();
         GameID request = json.fromJson(message, GameID.class);
         connections.addConnection(request.getGameID(),session);
-        Game game = new Game(games.getGame(request.getGameID()).game());
-
-        connections.notify(request.getGameID(),session,auths.getUsername(request.getAuthString())+" has joined the game");
-
-        try {
-            session.getRemote().sendString(json.toJson(game));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(games.getGame(request.getGameID())!=null) {
+            if(auths.getUsername(request.getAuthString())!= null) {
+                Game game = new Game(games.getGame(request.getGameID()).game());
+                System.out.println(request.getPlayerColor());
+                if (request.getPlayerColor() == ChessGame.TeamColor.WHITE) {
+                    if (auths.getUsername(request.getAuthString()).equals(games.getGame(request.getGameID()).whiteUsername())) {
+                        connections.notify(request.getGameID(), session, auths.getUsername(request.getAuthString()) + " has joined the game as White");
+                        try {
+                            session.getRemote().sendString(json.toJson(game));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        try {
+                            session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "You are not the designated White Team")));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else if (request.getPlayerColor() == ChessGame.TeamColor.BLACK) {
+                    if (auths.getUsername(request.getAuthString()).equals(games.getGame(request.getGameID()).blackUsername())) {
+                        connections.notify(request.getGameID(), session, auths.getUsername(request.getAuthString()) + " has joined the game as BLACK");
+                        try {
+                            session.getRemote().sendString(json.toJson(game));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        try {
+                            session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "You are not the designated White Team")));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+            else{
+                try {
+                    session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "Invalid authToken")));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }else{
+            try {
+                session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "Invalid GameID")));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+
     }
 
 
