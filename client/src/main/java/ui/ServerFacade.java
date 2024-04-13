@@ -25,7 +25,7 @@ public class ServerFacade {
     ChessBoard board = new ChessBoard();
     String hostport;
 
-    String COLOR;
+    String color;
     int gameID;
 
     public ServerFacade() {
@@ -296,10 +296,10 @@ public class ServerFacade {
 
         Object stuff = makeRequest(http, body, null, true);
         if(stuff.equals(200)){
-            COLOR = color;
+            this.color = color;
 
             webSocket(game,true);
-            webSocket.setColor(COLOR);
+            webSocket.setColor(this.color);
 
 
             return "";
@@ -379,10 +379,10 @@ public class ServerFacade {
             webSocket = new WebSocket();
             GameID command = null;
             Gson sender = new Gson();
-            if(player){webSocket.setColor(COLOR);
-                if(Objects.equals(COLOR, "WHITE")) {
+            if(player){webSocket.setColor(color);
+                if(Objects.equals(color, "WHITE")) {
                     command = new GameID(authtoken, game, UserGameCommand.CommandType.JOIN_PLAYER, ChessGame.TeamColor.WHITE);
-                }else if (Objects.equals(COLOR, "BLACK")){
+                }else if (Objects.equals(color, "BLACK")){
                     command = new GameID(authtoken, game, UserGameCommand.CommandType.JOIN_PLAYER, ChessGame.TeamColor.BLACK);
                 }
             }

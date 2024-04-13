@@ -17,23 +17,23 @@ public class ConnectionsManager {
         users = new HashMap<>();
     }
 
-    public void addConnection(int Game, Session session){
-        System.out.println(Game);
-        if(users.get(Game)==null) {
+    public void addConnection(int game, Session session){
+        System.out.println(game);
+        if(users.get(game)==null) {
             ArrayList<Session> newList = new ArrayList<>();
             newList.add(session);
-            users.put(Game,newList);
+            users.put(game,newList);
         }
         else{
-            users.get(Game).add(session);
+            users.get(game).add(session);
         }
     }
 
-    public void removeConnection(int Game, Session session){
+    public void removeConnection(int game, Session session){
         try{
-            for(int i = 0; i<users.get(Game).size(); i++){
-                if(users.get(Game).get(i)==session){
-                    users.get(Game).remove(i);
+            for(int i = 0; i<users.get(game).size(); i++){
+                if(users.get(game).get(i)==session){
+                    users.get(game).remove(i);
                 }
             }
         }catch(Exception e){
@@ -41,19 +41,19 @@ public class ConnectionsManager {
         }
     }
 
-    public void notify(int Game, Session session, String message){
+    public void notify(int game, Session session, String message){
         Message mail = new Message(message);
         Gson json = new Gson();
 
         try{
-            for(int i = 0; i<users.get(Game).size(); i++){
-                Session thisSession = users.get(Game).get(i);
+            for(int i = 0; i<users.get(game).size(); i++){
+                Session thisSession = users.get(game).get(i);
                 if(thisSession!=session){
                     if(thisSession.isOpen()){
                         thisSession.getRemote().sendString(json.toJson(mail));
                     }
                     else{
-                        users.get(Game).remove(i);
+                        users.get(game).remove(i);
                         i--;
                     }
                 }
@@ -63,18 +63,18 @@ public class ConnectionsManager {
         }
     }
 
-    public void update(int Game, Session session, String message){
+    public void update(int game, Session session, String message){
 
 
         try{
-            for(int i = 0; i<users.get(Game).size(); i++){
-                Session thisSession = users.get(Game).get(i);
+            for(int i = 0; i<users.get(game).size(); i++){
+                Session thisSession = users.get(game).get(i);
                 if(thisSession!=session){
                     if(thisSession.isOpen()){
                         thisSession.getRemote().sendString(message);
                     }
                     else{
-                        users.get(Game).remove(i);
+                        users.get(game).remove(i);
                         i--;
                     }
                 }

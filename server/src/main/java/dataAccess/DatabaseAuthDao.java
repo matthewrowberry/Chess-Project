@@ -33,7 +33,7 @@ public class DatabaseAuthDao implements AuthDAO{
     }
 
 
-    private final String[] createStatement = {
+    private final String[] createStatement1 = {
             """
             CREATE TABLE IF NOT EXISTS  auths (
                           `authToken` varchar(255) NOT NULL,
@@ -46,15 +46,16 @@ public class DatabaseAuthDao implements AuthDAO{
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
+        try (var con = DatabaseManager.getConnection()) {
 
-            for (var statement : createStatement) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
+            for (var statement1 : createStatement1) {
+                System.out.println("Creating the database");
+                try (var preparedStatement = con.prepareStatement(statement1)) {
                     preparedStatement.executeUpdate();
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Heretofore we were unable to create database: %s", ex.getMessage()));
         }
     }
 
