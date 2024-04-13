@@ -276,7 +276,7 @@ public class ServerFacade {
 
             webSocket(game,true);
             webSocket.setColor(this.color);
-            webSocket.onOpen(null,null);
+
 
 
             return "";

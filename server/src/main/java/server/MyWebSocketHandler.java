@@ -258,7 +258,7 @@ public class MyWebSocketHandler{
                         }
                     } else {
                         try {
-                            session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "You are not the designated White Team")));
+                            session.getRemote().sendString(json.toJson(new Oopsie(ServerMessage.ServerMessageType.ERROR, "You are not the designated Black Team")));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

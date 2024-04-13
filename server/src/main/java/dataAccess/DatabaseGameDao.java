@@ -40,15 +40,15 @@ public class DatabaseGameDao implements GameDAO{
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
+        try (var conn3 = DatabaseManager.getConnection()) {
 
-            for (var statement : createStatement) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
+            for (var statement3 : createStatement) {
+                try (var preparedStatement = conn3.prepareStatement(statement3)) {
                     preparedStatement.executeUpdate();
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("We have been Unable to configure database: %s", ex.getMessage()));
         }
     }
 
