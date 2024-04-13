@@ -1,13 +1,13 @@
 package webSocketMessages.serverMessages;
 
 public class Oopsie extends ServerMessage{
-    String message;
+    String errorMessage;
     public Oopsie(ServerMessageType type, String message) {
         super(type);
-        this.message = message;
+        this.errorMessage = message;
     }
 
-    public String getMessage(){
-        return message;
+    public String getErrorMessage(){
+        return errorMessage;
     }
 }
